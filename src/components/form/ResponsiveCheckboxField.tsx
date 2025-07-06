@@ -16,20 +16,31 @@ export const ResponsiveCheckboxField: React.FC<ResponsiveCheckboxFieldProps> = (
   const { formState, setField } = useForm();
   const { isTablet, getFontSize, getSpacing, getColumns, isLandscape } = useResponsive();
   
-  const value: string[] = formState[field.name] || [];
+  // Handle both single checkbox (boolean) and multiple checkboxes (array)
+  const isSingleCheckbox = !field.options || field.options.length === 0;
+  const value: string[] | boolean = isSingleCheckbox 
+    ? (formState[field.name] || false)
+    : (formState[field.name] || []);
+  
   const riskLevel = getFieldRiskLevel(field);
   const styles = getStyles(isTablet, getFontSize, getSpacing, isLandscape);
   const columns = getColumns();
 
   const toggleOption = (optionValue: string) => {
-    const newValue = value.includes(optionValue)
-      ? value.filter(v => v !== optionValue)
-      : [...value, optionValue];
+    const currentValue = formState[field.name] || [];
+    const newValue = currentValue.includes(optionValue)
+      ? currentValue.filter((v: string) => v !== optionValue)
+      : [...currentValue, optionValue];
     setField(field.name, newValue);
   };
 
+  const toggleSingleCheckbox = () => {
+    setField(field.name, !formState[field.name]);
+  };
+
   const renderCheckboxOption = ({ item, index }: { item: any; index: number }) => {
-    const isSelected = value.includes(item.value);
+    const currentValue = formState[field.name] || [];
+    const isSelected = currentValue.includes(item.value);
     return (
       <View style={[styles.checkboxOption, { flex: 1 / columns }]}>
         <Button
@@ -43,6 +54,36 @@ export const ResponsiveCheckboxField: React.FC<ResponsiveCheckboxFieldProps> = (
       </View>
     );
   };
+
+  // If single checkbox, render differently
+  if (isSingleCheckbox) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.fieldContainer}>
+          <View style={styles.labelContainer}>
+            <RiskIndicator level={riskLevel} size="small" showLabel={false} />
+          </View>
+          
+          <View style={styles.optionsContainer}>
+            <Button
+              title={`${value ? '☑️' : '☐'} ${field.label}`}
+              onPress={toggleSingleCheckbox}
+              variant={value ? 'primary' : 'outline'}
+              size={isTablet ? 'large' : 'medium'}
+              fullWidth
+              style={styles.checkboxButton}
+            />
+          </View>
+          
+          {error && (
+            <View style={styles.errorContainer}>
+              <Text style={styles.errorText}>❌ {error}</Text>
+            </View>
+          )}
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -76,7 +117,8 @@ export const ResponsiveCheckboxField: React.FC<ResponsiveCheckboxFieldProps> = (
               contentContainerStyle={styles.listContainer}
             >
               {field.options?.map((option, index) => {
-                const isSelected = value.includes(option.value);
+                const currentValue = formState[field.name] || [];
+                const isSelected = currentValue.includes(option.value);
                 return (
                   <View key={option.value} style={styles.checkboxOption}>
                     <Button
@@ -94,7 +136,7 @@ export const ResponsiveCheckboxField: React.FC<ResponsiveCheckboxFieldProps> = (
           )}
         </View>
         
-        {value.length > 0 && (
+        {Array.isArray(value) && value.length > 0 && (
           <Text style={styles.selectedText}>
             Selected: {value.length} item{value.length > 1 ? 's' : ''}
           </Text>
