@@ -93,7 +93,8 @@ const getStyles = (isTablet: boolean, getFontSize: Function, getSpacing: Functio
       flex: 1,
     },
     fieldContainer: {
-      marginBottom: getSpacing('md'),
+      marginBottom: getSpacing('lg'),
+      paddingBottom: getSpacing('sm'),
     },
     labelContainer: {
       flexDirection: 'row',

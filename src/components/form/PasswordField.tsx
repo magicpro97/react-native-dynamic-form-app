@@ -51,7 +51,8 @@ export const PasswordField: React.FC<PasswordFieldProps> = ({ field }) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 16,
+    marginBottom: 24,
+    paddingBottom: 8,
   },
   label: {
     fontSize: 16,

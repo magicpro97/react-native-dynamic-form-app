@@ -42,7 +42,8 @@ export const SelectField: React.FC<SelectFieldProps> = ({ field }) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 16,
+    marginBottom: 24,
+    paddingBottom: 8,
   },
   label: {
     fontSize: 16,
