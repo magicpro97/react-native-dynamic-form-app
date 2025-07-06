@@ -34,27 +34,35 @@ export const SyncStatus: React.FC<SyncStatusProps> = ({
     <View style={styles.container}>
       {showStats && (
         <View style={styles.statusContainer}>
-          <View style={[styles.statusDot, { backgroundColor: getSyncStatusColor() }]} />
+          <View
+            style={[
+              styles.statusDot,
+              { backgroundColor: getSyncStatusColor() },
+            ]}
+          />
           <Text style={styles.statusText}>{getSyncStatusText()}</Text>
         </View>
       )}
-      
+
       {showSyncButton && (
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[styles.syncButton, isSyncing && styles.syncButtonDisabled]}
           onPress={syncNow}
           disabled={isSyncing}
         >
-          <Text style={[styles.syncButtonText, isSyncing && styles.syncButtonTextDisabled]}>
+          <Text
+            style={[
+              styles.syncButtonText,
+              isSyncing && styles.syncButtonTextDisabled,
+            ]}
+          >
             {isSyncing ? 'Syncing...' : 'Sync Now'}
           </Text>
         </TouchableOpacity>
       )}
-      
+
       {showStats && syncStats && (
-        <Text style={styles.lastSyncText}>
-          Last sync: {syncStats.message}
-        </Text>
+        <Text style={styles.lastSyncText}>Last sync: {syncStats.message}</Text>
       )}
     </View>
   );

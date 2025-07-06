@@ -36,13 +36,13 @@ const formId = saveOfflineForm(formData, formTitle);
 
 // Cấu trúc dữ liệu
 interface OfflineFormData {
-  id: string;                          // Unique ID: form_timestamp_counter
-  formData: FormState;                 // Form input data
-  timestamp: number;                   // Thời gian tạo
-  updatedAt: number;                   // Thời gian cập nhật cuối
+  id: string; // Unique ID: form_timestamp_counter
+  formData: FormState; // Form input data
+  timestamp: number; // Thời gian tạo
+  updatedAt: number; // Thời gian cập nhật cuối
   status: 'pending' | 'synced' | 'failed'; // Trạng thái sync
-  formTitle: string;                   // Tiêu đề form
-  syncAttempts: number;                // Số lần thử sync
+  formTitle: string; // Tiêu đề form
+  syncAttempts: number; // Số lần thử sync
 }
 ```
 
@@ -56,7 +56,7 @@ class BackgroundSyncService {
       this.syncPendingForms();
     }, 30000); // 30 giây
   }
-  
+
   async syncPendingForms() {
     // 1. Kiểm tra network
     // 2. Lấy pending forms
@@ -77,16 +77,16 @@ const syncFormAPI = async (form: OfflineFormData) => {
   if (localTimestamp > serverTimestamp) {
     return { action: 'upload', success: true };
   }
-  
+
   // Scenario 2: Server mới hơn Local
   if (serverTimestamp > localTimestamp) {
-    return { 
-      action: 'download', 
-      success: true, 
-      serverData: newServerData 
+    return {
+      action: 'download',
+      success: true,
+      serverData: newServerData,
     };
   }
-  
+
   // Scenario 3: Conflict (timestamps bằng nhau hoặc concurrent edits)
   return { action: 'conflict', success: false };
 };
@@ -108,11 +108,11 @@ type FormStatus = 'pending' | 'synced' | 'failed';
 
 ```typescript
 interface SyncStats {
-  total: number;        // Tổng số form
-  successful: number;   // Sync thành công
-  failed: number;       // Sync thất bại
-  conflicts: number;    // Số conflict
-  message: string;      // Thông báo kết quả
+  total: number; // Tổng số form
+  successful: number; // Sync thành công
+  failed: number; // Sync thất bại
+  conflicts: number; // Số conflict
+  message: string; // Thông báo kết quả
 }
 ```
 
@@ -122,48 +122,47 @@ interface SyncStats {
 
 ```typescript
 // Chức năng chính
-- saveOfflineForm()      // Lưu form mới
-- getOfflineForms()      // Lấy tất cả forms
-- updateFormStatus()     // Cập nhật trạng thái
-- updateFormData()       // Cập nhật dữ liệu
-- deleteOfflineForm()    // Xóa form
-- getPendingForms()      // Lấy forms chờ sync
-- clearAllOfflineForms() // Xóa tất cả
+-saveOfflineForm() - // Lưu form mới
+  getOfflineForms() - // Lấy tất cả forms
+  updateFormStatus() - // Cập nhật trạng thái
+  updateFormData() - // Cập nhật dữ liệu
+  deleteOfflineForm() - // Xóa form
+  getPendingForms() - // Lấy forms chờ sync
+  clearAllOfflineForms(); // Xóa tất cả
 ```
 
 ### **2. Sync Service (`backgroundSync.ts`)**
 
 ```typescript
 // Chức năng chính
-- start()               // Bắt đầu auto sync
-- stop()                // Dừng auto sync
-- syncNow()             // Sync thủ công
-- syncPendingForms()    // Sync logic chính
-- addSyncListener()     // Đăng ký listener
-- removeSyncListener()  // Hủy listener
+-start() - // Bắt đầu auto sync
+  stop() - // Dừng auto sync
+  syncNow() - // Sync thủ công
+  syncPendingForms() - // Sync logic chính
+  addSyncListener() - // Đăng ký listener
+  removeSyncListener(); // Hủy listener
 ```
 
 ### **3. API Layer (`api.ts`)**
 
 ```typescript
 // Chức năng chính
-- syncFormAPI()         // Sync một form
-- isNetworkAvailable()  // Kiểm tra network
-- simulateDelay()       // Mock network delay
+-syncFormAPI() - // Sync một form
+  isNetworkAvailable() - // Kiểm tra network
+  simulateDelay(); // Mock network delay
 ```
 
 ### **4. Context Management**
 
 ```typescript
 // SyncContext: Quản lý trạng thái sync
-- isSyncing            // Đang sync hay không
-- syncStats            // Thống kê sync
-- pendingFormsCount    // Số form chờ sync
-- syncNow()            // Trigger manual sync
-
-// ToastContext: Quản lý thông báo
-- showToast()          // Hiển thị toast
-- hideToast()          // Ẩn toast
+-isSyncing - // Đang sync hay không
+  syncStats - // Thống kê sync
+  pendingFormsCount - // Số form chờ sync
+  syncNow() - // Trigger manual sync
+  // ToastContext: Quản lý thông báo
+  showToast() - // Hiển thị toast
+  hideToast(); // Ẩn toast
 ```
 
 ## 🎯 Các Scenario Sync
@@ -216,7 +215,7 @@ for (const form of pendingForms) {
     // Handle success
   } catch (error) {
     incrementSyncAttempts(form.id);
-    
+
     // Đánh dấu failed sau 3 lần thử
     if (form.syncAttempts >= 3) {
       updateFormStatus(form.id, 'failed');
@@ -242,14 +241,14 @@ for (const form of pendingForms) {
 
 ```typescript
 // Success scenarios
-"✅ Synced 3 forms successfully"
-"✅ Downloaded 1 new form from server"
+'✅ Synced 3 forms successfully';
+'✅ Downloaded 1 new form from server';
 
-// Error scenarios  
-"❌ Failed to sync 2 forms"
-"⚠️ 1 forms have conflicts"
-"ℹ️ No network connectivity"
-"ℹ️ No forms to sync"
+// Error scenarios
+'❌ Failed to sync 2 forms';
+'⚠️ 1 forms have conflicts';
+'ℹ️ No network connectivity';
+'ℹ️ No forms to sync';
 ```
 
 ### **Sync Status Indicators**
@@ -288,10 +287,10 @@ for (const form of pendingForms) {
 
 ```typescript
 // Configurable parameters
-const SYNC_INTERVAL = 30000;        // 30 giây
-const MAX_RETRY_ATTEMPTS = 3;       // Tối đa 3 lần thử
-const NETWORK_TIMEOUT = 10000;      // 10 giây timeout
-const TOAST_DURATION = 3000;        // 3 giây hiển thị toast
+const SYNC_INTERVAL = 30000; // 30 giây
+const MAX_RETRY_ATTEMPTS = 3; // Tối đa 3 lần thử
+const NETWORK_TIMEOUT = 10000; // 10 giây timeout
+const TOAST_DURATION = 3000; // 3 giây hiển thị toast
 ```
 
 ### **Storage Configuration**
@@ -390,4 +389,4 @@ const AUTH_TOKEN_KEY = 'auth_token';
 
 ---
 
-*Tài liệu này mô tả chi tiết cách hoạt động của hệ thống đồng bộ dữ liệu trong React Native Dynamic Form App. Hệ thống được thiết kế để đảm bảo tính nhất quán dữ liệu, xử lý conflict thông minh, và trải nghiệm người dùng mượt mà.*
+_Tài liệu này mô tả chi tiết cách hoạt động của hệ thống đồng bộ dữ liệu trong React Native Dynamic Form App. Hệ thống được thiết kế để đảm bảo tính nhất quán dữ liệu, xử lý conflict thông minh, và trải nghiệm người dùng mượt mà._

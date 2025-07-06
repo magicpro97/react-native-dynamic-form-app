@@ -41,7 +41,7 @@ const handleSubmit = async (formData: FormState) => {
     // Generate unique ID and timestamp
     const formId = generateFormId(); // format: form_timestamp_counter
     const timestamp = Date.now();
-    
+
     // Create offline form record
     const offlineForm: OfflineFormData = {
       id: formId,
@@ -52,18 +52,17 @@ const handleSubmit = async (formData: FormState) => {
       formTitle: 'Dynamic Form',
       syncAttempts: 0,
     };
-    
+
     // Save to MMKV storage
     const forms = getOfflineForms();
     forms.push(offlineForm);
     storage.set(OFFLINE_FORMS_KEY, JSON.stringify(forms));
-    
+
     // Update pending count
     updatePendingCount();
-    
+
     // Navigate to success screen
     router.push('/success');
-    
   } catch (error) {
     showToast('Failed to save form', 'error');
   }
@@ -77,13 +76,13 @@ const handleSubmit = async (formData: FormState) => {
 useEffect(() => {
   // Initialize sync service
   const syncService = BackgroundSyncService.getInstance();
-  
+
   // Start background sync (30s interval)
   syncService.start();
-  
+
   // Add sync listener for UI updates
   syncService.addSyncListener(handleSyncStats);
-  
+
   // Cleanup on unmount
   return () => {
     syncService.stop();
@@ -100,28 +99,28 @@ private async syncPendingForms(): Promise<SyncStats> {
   // Step 1: Check network connectivity
   const isOnline = await isNetworkAvailable();
   if (!isOnline) {
-    return { 
-      total: 0, successful: 0, failed: 0, conflicts: 0, 
-      message: 'No network connectivity' 
+    return {
+      total: 0, successful: 0, failed: 0, conflicts: 0,
+      message: 'No network connectivity'
     };
   }
-  
+
   // Step 2: Get pending forms
   const pendingForms = getPendingForms();
   if (pendingForms.length === 0) {
-    return { 
-      total: 0, successful: 0, failed: 0, conflicts: 0, 
-      message: 'No forms to sync' 
+    return {
+      total: 0, successful: 0, failed: 0, conflicts: 0,
+      message: 'No forms to sync'
     };
   }
-  
+
   // Step 3: Sync each form
   let successful = 0, failed = 0, conflicts = 0;
-  
+
   for (const form of pendingForms) {
     try {
       const result = await syncFormAPI(form);
-      
+
       if (result.success) {
         switch (result.action) {
           case 'upload':
@@ -141,7 +140,7 @@ private async syncPendingForms(): Promise<SyncStats> {
       } else {
         failed++;
         incrementSyncAttempts(form.id);
-        
+
         if (form.syncAttempts >= 3) {
           updateFormStatus(form.id, 'failed');
         }
@@ -151,7 +150,7 @@ private async syncPendingForms(): Promise<SyncStats> {
       incrementSyncAttempts(form.id);
     }
   }
-  
+
   // Step 4: Return statistics
   return {
     total: pendingForms.length,
@@ -167,15 +166,18 @@ private async syncPendingForms(): Promise<SyncStats> {
 
 ```typescript
 // Conflict detection algorithm
-const detectConflict = (localForm: OfflineFormData, serverForm: OfflineFormData) => {
+const detectConflict = (
+  localForm: OfflineFormData,
+  serverForm: OfflineFormData
+) => {
   const timeDiff = Math.abs(localForm.updatedAt - serverForm.updatedAt);
   const CONFLICT_THRESHOLD = 5000; // 5 seconds
-  
+
   // If timestamps are very close, consider it a conflict
   if (timeDiff < CONFLICT_THRESHOLD) {
     return 'conflict';
   }
-  
+
   // Otherwise, use newer timestamp
   return localForm.updatedAt > serverForm.updatedAt ? 'upload' : 'download';
 };
@@ -199,15 +201,15 @@ const resolveConflict = (strategy: 'local' | 'server' | 'merge') => {
 
 ```typescript
 interface OfflineFormData {
-  id: string;                          // Unique identifier
-  formData: FormState;                 // Form field values
-  timestamp: number;                   // Creation timestamp
-  updatedAt: number;                   // Last modification timestamp
+  id: string; // Unique identifier
+  formData: FormState; // Form field values
+  timestamp: number; // Creation timestamp
+  updatedAt: number; // Last modification timestamp
   status: 'pending' | 'synced' | 'failed'; // Sync status
-  formTitle: string;                   // Form title for display
-  syncAttempts: number;                // Number of sync attempts
-  conflictReason?: string;             // Reason for conflict (if any)
-  serverVersion?: OfflineFormData;     // Server version (for conflict resolution)
+  formTitle: string; // Form title for display
+  syncAttempts: number; // Number of sync attempts
+  conflictReason?: string; // Reason for conflict (if any)
+  serverVersion?: OfflineFormData; // Server version (for conflict resolution)
 }
 ```
 
@@ -215,8 +217,8 @@ interface OfflineFormData {
 
 ```typescript
 interface FormState {
-  [fieldName: string]: any;            // Dynamic field values
-  
+  [fieldName: string]: any; // Dynamic field values
+
   // Example fields
   name?: string;
   email?: string;
@@ -225,7 +227,7 @@ interface FormState {
   feedback?: string;
   signature?: string;
   photo?: string;
-  
+
   // Metadata
   submittedAt?: number;
   deviceInfo?: {
@@ -240,13 +242,13 @@ interface FormState {
 
 ```typescript
 interface SyncStats {
-  total: number;                       // Total forms processed
-  successful: number;                  // Successfully synced forms
-  failed: number;                      // Failed sync attempts
-  conflicts: number;                   // Conflicted forms
-  message: string;                     // User-friendly message
-  timestamp: number;                   // Sync completion time
-  duration: number;                    // Sync duration (ms)
+  total: number; // Total forms processed
+  successful: number; // Successfully synced forms
+  failed: number; // Failed sync attempts
+  conflicts: number; // Conflicted forms
+  message: string; // User-friendly message
+  timestamp: number; // Sync completion time
+  duration: number; // Sync duration (ms)
 }
 ```
 
@@ -267,14 +269,16 @@ interface SyncFormAPIResponse {
   };
 }
 
-const syncFormAPI = async (form: OfflineFormData): Promise<SyncFormAPIResponse> => {
+const syncFormAPI = async (
+  form: OfflineFormData
+): Promise<SyncFormAPIResponse> => {
   // Simulate API call
   await simulateDelay(500);
-  
+
   // Mock server logic
   const serverTimestamp = Date.now() - Math.random() * 10000;
   const timeDiff = form.updatedAt - serverTimestamp;
-  
+
   if (Math.abs(timeDiff) < 1000) {
     // Conflict scenario
     return {
@@ -301,7 +305,7 @@ const syncFormAPI = async (form: OfflineFormData): Promise<SyncFormAPIResponse> 
       formData: { ...form.formData, serverModified: true },
       updatedAt: serverTimestamp,
     };
-    
+
     return {
       success: true,
       message: 'Server version downloaded',
@@ -318,11 +322,11 @@ const syncFormAPI = async (form: OfflineFormData): Promise<SyncFormAPIResponse> 
 const isNetworkAvailable = async (): Promise<boolean> => {
   try {
     const netInfo = await NetInfo.fetch();
-    
+
     // Check both connectivity and internet reachability
     const isConnected = netInfo.isConnected === true;
     const isInternetReachable = netInfo.isInternetReachable === true;
-    
+
     return isConnected && isInternetReachable;
   } catch (error) {
     console.error('Network check failed:', error);
@@ -341,11 +345,11 @@ const BATCH_SIZE = 5;
 
 const syncInBatches = async (forms: OfflineFormData[]) => {
   const batches = chunk(forms, BATCH_SIZE);
-  
+
   for (const batch of batches) {
     const promises = batch.map(form => syncFormAPI(form));
     const results = await Promise.allSettled(promises);
-    
+
     // Process results
     results.forEach((result, index) => {
       if (result.status === 'fulfilled') {
@@ -354,7 +358,7 @@ const syncInBatches = async (forms: OfflineFormData[]) => {
         handleSyncError(batch[index], result.reason);
       }
     });
-    
+
     // Delay between batches to avoid overwhelming the server
     await sleep(1000);
   }
@@ -369,12 +373,12 @@ const MAX_STORED_FORMS = 100;
 
 const cleanupOldForms = () => {
   const forms = getOfflineForms();
-  
+
   if (forms.length > MAX_STORED_FORMS) {
     // Keep only the most recent forms
     const sortedForms = forms.sort((a, b) => b.updatedAt - a.updatedAt);
     const formsToKeep = sortedForms.slice(0, MAX_STORED_FORMS);
-    
+
     storage.set(OFFLINE_FORMS_KEY, JSON.stringify(formsToKeep));
   }
 };
@@ -388,14 +392,14 @@ const calculateRetryDelay = (attempt: number): number => {
   const baseDelay = 1000; // 1 second
   const maxDelay = 60000; // 1 minute
   const jitter = Math.random() * 0.1; // 10% jitter
-  
+
   const delay = Math.min(baseDelay * Math.pow(2, attempt), maxDelay);
   return delay * (1 + jitter);
 };
 
 const retrySync = async (form: OfflineFormData) => {
   const maxAttempts = 3;
-  
+
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     try {
       const result = await syncFormAPI(form);
@@ -406,7 +410,7 @@ const retrySync = async (form: OfflineFormData) => {
       if (attempt === maxAttempts - 1) {
         throw error;
       }
-      
+
       const delay = calculateRetryDelay(attempt);
       await sleep(delay);
     }
@@ -447,24 +451,24 @@ const handleSyncError = (form: OfflineFormData, error: SyncError) => {
       // Retry later when network is available
       scheduleRetry(form, 30000); // 30 seconds
       break;
-      
+
     case SyncErrorType.SERVER_ERROR:
       // Retry with exponential backoff
       scheduleRetry(form, calculateRetryDelay(form.syncAttempts));
       break;
-      
+
     case SyncErrorType.CONFLICT_ERROR:
       // Mark for manual resolution
       updateFormStatus(form.id, 'failed');
       showConflictDialog(form);
       break;
-      
+
     case SyncErrorType.VALIDATION_ERROR:
       // Mark as failed, requires user intervention
       updateFormStatus(form.id, 'failed');
       showValidationError(form, error.details);
       break;
-      
+
     default:
       // Generic error handling
       incrementSyncAttempts(form.id);
@@ -487,14 +491,14 @@ interface SyncMetrics {
   conflictRate: number;
   networkFailureRate: number;
   retryRate: number;
-  
+
   // Time-based metrics
   hourlyStats: Array<{
     hour: number;
     syncCount: number;
     successRate: number;
   }>;
-  
+
   // Error breakdown
   errorTypes: Record<SyncErrorType, number>;
 }
@@ -512,18 +516,18 @@ const trackSyncPerformance = (stats: SyncStats, duration: number) => {
     conflictRate: stats.conflicts / stats.total,
     totalForms: stats.total,
   };
-  
+
   // Store metrics locally
   const existingMetrics = getStoredMetrics();
   existingMetrics.push(metrics);
-  
+
   // Keep only last 100 entries
   if (existingMetrics.length > 100) {
     existingMetrics.shift();
   }
-  
+
   storage.set('sync_metrics', JSON.stringify(existingMetrics));
-  
+
   // Send to analytics service (if available)
   if (isAnalyticsEnabled()) {
     sendAnalytics('sync_completed', metrics);
@@ -549,11 +553,11 @@ const resolveFieldConflicts = (
   serverForm: OfflineFormData
 ): FieldConflict[] => {
   const conflicts: FieldConflict[] = [];
-  
+
   Object.keys(localForm.formData).forEach(fieldName => {
     const localValue = localForm.formData[fieldName];
     const serverValue = serverForm.formData[fieldName];
-    
+
     if (localValue !== serverValue) {
       conflicts.push({
         fieldName,
@@ -563,7 +567,7 @@ const resolveFieldConflicts = (
       });
     }
   });
-  
+
   return conflicts;
 };
 ```
@@ -574,21 +578,23 @@ const resolveFieldConflicts = (
 // WebSocket-based real-time sync
 const initializeRealtimeSync = () => {
   const ws = new WebSocket('wss://api.example.com/sync');
-  
-  ws.onmessage = (event) => {
+
+  ws.onmessage = event => {
     const data = JSON.parse(event.data);
-    
+
     if (data.type === 'form_updated') {
       handleRemoteFormUpdate(data.formId, data.formData);
     }
   };
-  
+
   ws.onopen = () => {
     // Subscribe to form updates
-    ws.send(JSON.stringify({
-      type: 'subscribe',
-      formIds: getPendingForms().map(f => f.id),
-    }));
+    ws.send(
+      JSON.stringify({
+        type: 'subscribe',
+        formIds: getPendingForms().map(f => f.id),
+      })
+    );
   };
 };
 ```
@@ -597,7 +603,10 @@ const initializeRealtimeSync = () => {
 
 ```typescript
 // Service Worker for background sync
-if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
+if (
+  'serviceWorker' in navigator &&
+  'sync' in window.ServiceWorkerRegistration.prototype
+) {
   navigator.serviceWorker.ready.then(registration => {
     return registration.sync.register('background-sync');
   });
@@ -620,19 +629,19 @@ describe('Form Sync', () => {
   test('should save form offline', async () => {
     const formData = { name: 'John', email: 'john@example.com' };
     const formId = saveOfflineForm(formData, 'Test Form');
-    
+
     expect(formId).toBeDefined();
     expect(formId).toMatch(/^form_\d+_\d+$/);
-    
+
     const forms = getOfflineForms();
     expect(forms).toHaveLength(1);
     expect(forms[0].formData).toEqual(formData);
   });
-  
+
   test('should handle sync conflicts', async () => {
     const localForm = createMockForm({ updatedAt: 1000 });
     const serverForm = createMockForm({ updatedAt: 1000 });
-    
+
     const result = await syncFormAPI(localForm);
     expect(result.action).toBe('conflict');
     expect(result.success).toBe(false);
@@ -648,13 +657,13 @@ describe('Sync Integration', () => {
     // Setup
     const syncService = BackgroundSyncService.getInstance();
     const mockForms = [createMockForm(), createMockForm()];
-    
+
     // Mock API responses
     mockSyncAPI.mockResolvedValue({ success: true, action: 'upload' });
-    
+
     // Test sync
     const stats = await syncService.syncNow();
-    
+
     expect(stats.successful).toBe(2);
     expect(stats.failed).toBe(0);
     expect(stats.conflicts).toBe(0);
@@ -673,4 +682,4 @@ describe('Sync Integration', () => {
 
 ---
 
-*This technical specification provides comprehensive details about the form data synchronization system implementation. It serves as a reference for developers working on the sync functionality and future enhancements.*
+_This technical specification provides comprehensive details about the form data synchronization system implementation. It serves as a reference for developers working on the sync functionality and future enhancements._

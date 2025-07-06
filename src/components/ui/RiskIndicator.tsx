@@ -28,13 +28,13 @@ const riskConfig = {
   },
 };
 
-export const RiskIndicator: React.FC<RiskIndicatorProps> = ({ 
-  level, 
-  size = 'medium', 
-  showLabel = true 
+export const RiskIndicator: React.FC<RiskIndicatorProps> = ({
+  level,
+  size = 'medium',
+  showLabel = true,
 }) => {
   const config = riskConfig[level];
-  
+
   return (
     <View style={[styles.container, styles[size]]}>
       <View style={[styles.indicator, { backgroundColor: config.color }]}>
@@ -84,7 +84,10 @@ export const getRiskColor = (level: RiskLevel): string => {
 };
 
 // Utility function to determine risk level based on field requirements
-export const getFieldRiskLevel = (field: { required: boolean; type: string }): RiskLevel => {
+export const getFieldRiskLevel = (field: {
+  required: boolean;
+  type: string;
+}): RiskLevel => {
   if (field.required) {
     if (field.type === 'signature' || field.type === 'photo') {
       return 'high';

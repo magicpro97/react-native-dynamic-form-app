@@ -29,7 +29,10 @@ export const getOfflineForms = (): OfflineFormData[] => {
 };
 
 // Save form to offline storage
-export const saveOfflineForm = (formData: FormState, formTitle: string): string => {
+export const saveOfflineForm = (
+  formData: FormState,
+  formTitle: string,
+): string => {
   try {
     const formId = generateFormId();
     const now = Date.now();
@@ -45,7 +48,7 @@ export const saveOfflineForm = (formData: FormState, formTitle: string): string 
 
     const existingForms = getOfflineForms();
     const updatedForms = [...existingForms, newForm];
-    
+
     storage.set(OFFLINE_FORMS_KEY, JSON.stringify(updatedForms));
     return formId;
   } catch (error) {
@@ -55,11 +58,14 @@ export const saveOfflineForm = (formData: FormState, formTitle: string): string 
 };
 
 // Update form status
-export const updateFormStatus = (formId: string, status: 'pending' | 'synced' | 'failed'): void => {
+export const updateFormStatus = (
+  formId: string,
+  status: 'pending' | 'synced' | 'failed',
+): void => {
   try {
     const forms = getOfflineForms();
-    const updatedForms = forms.map(form => 
-      form.id === formId ? { ...form, status } : form
+    const updatedForms = forms.map(form =>
+      form.id === formId ? { ...form, status } : form,
     );
     storage.set(OFFLINE_FORMS_KEY, JSON.stringify(updatedForms));
   } catch (error) {
@@ -103,8 +109,8 @@ export const clearAllOfflineForms = (): void => {
 export const updateFormData = (formId: string, formData: FormState): void => {
   try {
     const forms = getOfflineForms();
-    const updatedForms = forms.map(form => 
-      form.id === formId ? { ...form, formData, updatedAt: Date.now() } : form
+    const updatedForms = forms.map(form =>
+      form.id === formId ? { ...form, formData, updatedAt: Date.now() } : form,
     );
     storage.set(OFFLINE_FORMS_KEY, JSON.stringify(updatedForms));
   } catch (error) {
@@ -116,8 +122,10 @@ export const updateFormData = (formId: string, formData: FormState): void => {
 export const incrementSyncAttempts = (formId: string): void => {
   try {
     const forms = getOfflineForms();
-    const updatedForms = forms.map(form => 
-      form.id === formId ? { ...form, syncAttempts: (form.syncAttempts || 0) + 1 } : form
+    const updatedForms = forms.map(form =>
+      form.id === formId
+        ? { ...form, syncAttempts: (form.syncAttempts || 0) + 1 }
+        : form,
     );
     storage.set(OFFLINE_FORMS_KEY, JSON.stringify(updatedForms));
   } catch (error) {

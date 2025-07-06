@@ -1,9 +1,23 @@
 import React from 'react';
-import { View, Text, TextInput, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import { FormField, FormErrors } from '../../types/form';
 import { useForm } from '../../context/FormContext';
 import { useResponsive } from '../../hooks/useResponsive';
-import { colors, spacing, borderRadius, fontSize, fontWeight, shadows } from '../../theme';
+import {
+  colors,
+  spacing,
+  borderRadius,
+  fontSize,
+  fontWeight,
+  shadows,
+} from '../../theme';
 import { RiskIndicator, getFieldRiskLevel } from '../ui/RiskIndicator';
 
 interface ResponsiveTextInputProps {
@@ -11,17 +25,20 @@ interface ResponsiveTextInputProps {
   error?: string;
 }
 
-export const ResponsiveTextInput: React.FC<ResponsiveTextInputProps> = ({ field, error }) => {
+export const ResponsiveTextInput: React.FC<ResponsiveTextInputProps> = ({
+  field,
+  error,
+}) => {
   const { formState, setField } = useForm();
   const { isTablet, getFontSize, getSpacing, isLandscape } = useResponsive();
-  
+
   const value = formState[field.name] || '';
   const riskLevel = getFieldRiskLevel(field);
-  
+
   const styles = getStyles(isTablet, getFontSize, getSpacing, isLandscape);
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
@@ -31,9 +48,9 @@ export const ResponsiveTextInput: React.FC<ResponsiveTextInputProps> = ({ field,
             {field.label}
             {field.required && <Text style={styles.required}> *</Text>}
           </Text>
-          <RiskIndicator level={riskLevel} size="small" showLabel={false} />
+          <RiskIndicator level={riskLevel} size='small' showLabel={false} />
         </View>
-        
+
         <TextInput
           style={[
             styles.input,
@@ -41,17 +58,23 @@ export const ResponsiveTextInput: React.FC<ResponsiveTextInputProps> = ({ field,
             field.required && styles.inputRequired,
           ]}
           value={value}
-          onChangeText={(text) => setField(field.name, text)}
+          onChangeText={text => setField(field.name, text)}
           placeholder={field.placeholder}
           placeholderTextColor={colors.textSecondary}
-          keyboardType={field.type === 'email' ? 'email-address' : field.type === 'number' ? 'numeric' : 'default'}
+          keyboardType={
+            field.type === 'email'
+              ? 'email-address'
+              : field.type === 'number'
+                ? 'numeric'
+                : 'default'
+          }
           autoCapitalize={field.type === 'email' ? 'none' : 'sentences'}
           autoCorrect={field.type !== 'email'}
           textContentType={field.type === 'email' ? 'emailAddress' : undefined}
-          returnKeyType="next"
+          returnKeyType='next'
           blurOnSubmit={false}
         />
-        
+
         {error && (
           <View style={styles.errorContainer}>
             <Text style={styles.errorText}>❌ {error}</Text>
@@ -62,9 +85,14 @@ export const ResponsiveTextInput: React.FC<ResponsiveTextInputProps> = ({ field,
   );
 };
 
-const getStyles = (isTablet: boolean, getFontSize: Function, getSpacing: Function, isLandscape: boolean) => {
+const getStyles = (
+  isTablet: boolean,
+  getFontSize: Function,
+  getSpacing: Function,
+  isLandscape: boolean,
+) => {
   const inputHeight = isTablet ? (isLandscape ? 56 : 52) : 48;
-  
+
   return StyleSheet.create({
     container: {
       flex: 1,

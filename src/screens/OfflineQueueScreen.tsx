@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  View, 
-  Text, 
-  StyleSheet, 
-  ScrollView, 
-  TouchableOpacity, 
-  Alert, 
-  RefreshControl 
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+  RefreshControl,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { 
-  getOfflineForms, 
-  deleteOfflineForm, 
-  updateFormStatus, 
-  clearAllOfflineForms 
+import {
+  getOfflineForms,
+  deleteOfflineForm,
+  updateFormStatus,
+  clearAllOfflineForms,
 } from '../utils/storage';
 import { submitFormAPI, isNetworkAvailable } from '../services/api';
 import { OfflineFormData } from '../types/form';
@@ -43,28 +43,24 @@ const OfflineQueueScreen: React.FC = () => {
   };
 
   const handleDeleteForm = (formId: string) => {
-    Alert.alert(
-      'Delete Form',
-      'Are you sure you want to delete this form?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { 
-          text: 'Delete', 
-          style: 'destructive',
-          onPress: () => {
-            deleteOfflineForm(formId);
-            loadOfflineForms();
-          }
-        }
-      ]
-    );
+    Alert.alert('Delete Form', 'Are you sure you want to delete this form?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Delete',
+        style: 'destructive',
+        onPress: () => {
+          deleteOfflineForm(formId);
+          loadOfflineForms();
+        },
+      },
+    ]);
   };
 
   const handleViewForm = (form: OfflineFormData) => {
     Alert.alert(
       'Form Details',
       `Title: ${form.formTitle}\nSubmitted: ${new Date(form.timestamp).toLocaleString()}\nStatus: ${form.status}\n\nData: ${JSON.stringify(form.formData, null, 2)}`,
-      [{ text: 'OK' }]
+      [{ text: 'OK' }],
     );
   };
 
@@ -75,12 +71,15 @@ const OfflineQueueScreen: React.FC = () => {
 
       const networkAvailable = await isNetworkAvailable();
       if (!networkAvailable) {
-        Alert.alert('No Network', 'Please check your internet connection and try again.');
+        Alert.alert(
+          'No Network',
+          'Please check your internet connection and try again.',
+        );
         return;
       }
 
       const response = await submitFormAPI(form.formData);
-      
+
       if (response.success) {
         updateFormStatus(form.id, 'synced');
         Alert.alert('Success', 'Form synced successfully!');
@@ -88,7 +87,7 @@ const OfflineQueueScreen: React.FC = () => {
         updateFormStatus(form.id, 'failed');
         Alert.alert('Sync Failed', response.message);
       }
-      
+
       loadOfflineForms();
     } catch (error) {
       updateFormStatus(form.id, 'failed');
@@ -99,7 +98,7 @@ const OfflineQueueScreen: React.FC = () => {
 
   const handleSyncAll = async () => {
     const pendingForms = offlineForms.filter(form => form.status === 'pending');
-    
+
     if (pendingForms.length === 0) {
       Alert.alert('No Pending Forms', 'All forms are already synced.');
       return;
@@ -110,13 +109,16 @@ const OfflineQueueScreen: React.FC = () => {
       `Are you sure you want to sync ${pendingForms.length} pending forms?`,
       [
         { text: 'Cancel', style: 'cancel' },
-        { 
-          text: 'Sync All', 
+        {
+          text: 'Sync All',
           onPress: async () => {
             try {
               const networkAvailable = await isNetworkAvailable();
               if (!networkAvailable) {
-                Alert.alert('No Network', 'Please check your internet connection and try again.');
+                Alert.alert(
+                  'No Network',
+                  'Please check your internet connection and try again.',
+                );
                 return;
               }
 
@@ -141,16 +143,16 @@ const OfflineQueueScreen: React.FC = () => {
 
               Alert.alert(
                 'Sync Complete',
-                `Successfully synced: ${syncedCount}\nFailed: ${failedCount}`
+                `Successfully synced: ${syncedCount}\nFailed: ${failedCount}`,
               );
-              
+
               loadOfflineForms();
             } catch (error) {
               Alert.alert('Error', 'Failed to sync forms. Please try again.');
             }
-          }
-        }
-      ]
+          },
+        },
+      ],
     );
   };
 
@@ -160,40 +162,48 @@ const OfflineQueueScreen: React.FC = () => {
       'Are you sure you want to delete all offline forms? This action cannot be undone.',
       [
         { text: 'Cancel', style: 'cancel' },
-        { 
-          text: 'Clear All', 
+        {
+          text: 'Clear All',
           style: 'destructive',
           onPress: () => {
             clearAllOfflineForms();
             loadOfflineForms();
-          }
-        }
-      ]
+          },
+        },
+      ],
     );
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return '#FF9800';
-      case 'synced': return '#4CAF50';
-      case 'failed': return '#F44336';
-      default: return '#999';
+      case 'pending':
+        return '#FF9800';
+      case 'synced':
+        return '#4CAF50';
+      case 'failed':
+        return '#F44336';
+      default:
+        return '#999';
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'pending': return '⏳';
-      case 'synced': return '✅';
-      case 'failed': return '❌';
-      default: return '?';
+      case 'pending':
+        return '⏳';
+      case 'synced':
+        return '✅';
+      case 'failed':
+        return '❌';
+      default:
+        return '?';
     }
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.backButton}
           onPress={() => router.back()}
         >
@@ -203,16 +213,14 @@ const OfflineQueueScreen: React.FC = () => {
       </View>
 
       <View style={styles.actionButtons}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={[styles.actionButton, styles.syncButton]}
           onPress={handleSyncAll}
         >
-          <Text style={styles.syncButtonText}>
-            Sync All
-          </Text>
+          <Text style={styles.syncButtonText}>Sync All</Text>
         </TouchableOpacity>
-        
-        <TouchableOpacity 
+
+        <TouchableOpacity
           style={[styles.actionButton, styles.clearButton]}
           onPress={handleClearAll}
         >
@@ -223,7 +231,7 @@ const OfflineQueueScreen: React.FC = () => {
       {/* Add Sync Status Component */}
       <SyncStatus showSyncButton={false} showStats={true} />
 
-      <ScrollView 
+      <ScrollView
         style={styles.scrollView}
         refreshControl={
           <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
@@ -232,7 +240,7 @@ const OfflineQueueScreen: React.FC = () => {
         {offlineForms.length === 0 ? (
           <View style={styles.emptyState}>
             <Text style={styles.emptyStateText}>No offline forms found</Text>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.createFormButton}
               onPress={() => router.push('/form')}
             >
@@ -240,39 +248,44 @@ const OfflineQueueScreen: React.FC = () => {
             </TouchableOpacity>
           </View>
         ) : (
-          offlineForms.map((form) => (
+          offlineForms.map(form => (
             <View key={form.id} style={styles.formCard}>
               <View style={styles.formHeader}>
                 <Text style={styles.formTitle}>{form.formTitle}</Text>
-                <View style={[styles.statusBadge, { backgroundColor: getStatusColor(form.status) }]}>
+                <View
+                  style={[
+                    styles.statusBadge,
+                    { backgroundColor: getStatusColor(form.status) },
+                  ]}
+                >
                   <Text style={styles.statusText}>
                     {getStatusIcon(form.status)} {form.status.toUpperCase()}
                   </Text>
                 </View>
               </View>
-              
+
               <Text style={styles.formTime}>
                 {new Date(form.timestamp).toLocaleString()}
               </Text>
-              
+
               <View style={styles.formActions}>
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={[styles.actionBtn, styles.viewBtn]}
                   onPress={() => handleViewForm(form)}
                 >
                   <Text style={styles.viewBtnText}>View</Text>
                 </TouchableOpacity>
-                
+
                 {form.status === 'pending' && (
-                  <TouchableOpacity 
+                  <TouchableOpacity
                     style={[styles.actionBtn, styles.syncBtn]}
                     onPress={() => handleSyncForm(form)}
                   >
                     <Text style={styles.syncBtnText}>Sync</Text>
                   </TouchableOpacity>
                 )}
-                
-                <TouchableOpacity 
+
+                <TouchableOpacity
                   style={[styles.actionBtn, styles.deleteBtn]}
                   onPress={() => handleDeleteForm(form.id)}
                 >

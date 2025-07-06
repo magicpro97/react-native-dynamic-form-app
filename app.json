@@ -11,9 +11,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
@@ -36,9 +34,6 @@
       "favicon": "./assets/favicon.png"
     },
     "scheme": "app",
-    "plugins": [
-      "expo-router",
-      "expo-image-picker"
-    ]
+    "plugins": ["expo-router", "expo-image-picker"]
   }
 }

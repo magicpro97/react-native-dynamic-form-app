@@ -1,5 +1,12 @@
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, Button, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  Button,
+  TouchableOpacity,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { getPendingFormsCount } from '../utils/storage';
 import { SyncStatus } from '../components/sync/SyncStatus';
@@ -20,7 +27,7 @@ export default function HomeScreen() {
         // Use imported JSON data directly
         setFormTitle(formData.title);
         setFieldCount(formData.fields.length);
-        
+
         // Refresh pending forms count
         refreshPendingCount();
       } catch (e) {
@@ -57,34 +64,42 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <Text style={styles.title}>{formTitle}</Text>
       <Text style={styles.subtitle}>Number of fields: {fieldCount}</Text>
-      
+
       {/* Sync Status */}
       <SyncStatus showSyncButton={true} showStats={true} />
-      
+
       {pendingFormsCount > 0 && (
         <View style={styles.offlineNotice}>
           <Text style={styles.offlineNoticeText}>
-            📱 {pendingFormsCount} form{pendingFormsCount > 1 ? 's' : ''} waiting to sync
+            📱 {pendingFormsCount} form{pendingFormsCount > 1 ? 's' : ''}{' '}
+            waiting to sync
           </Text>
         </View>
       )}
-      
+
       <View style={styles.buttonContainer}>
-        <Button title="Open Dynamic Form" onPress={navigateToForm} />
-        
+        <Button title='Open Dynamic Form' onPress={navigateToForm} />
+
         <View style={styles.spacing} />
-        
-        <Button title="📱 Responsive Form (iPad Optimized)" onPress={navigateToResponsiveForm} />
-        
+
+        <Button
+          title='📱 Responsive Form (iPad Optimized)'
+          onPress={navigateToResponsiveForm}
+        />
+
         <View style={styles.spacing} />
-        
-        <Button title="🔍 Validation Demo" onPress={navigateToValidationDemo} />
-        
+
+        <Button title='🔍 Validation Demo' onPress={navigateToValidationDemo} />
+
         <View style={styles.spacing} />
-        
-        <TouchableOpacity style={styles.offlineButton} onPress={navigateToOfflineQueue}>
+
+        <TouchableOpacity
+          style={styles.offlineButton}
+          onPress={navigateToOfflineQueue}
+        >
           <Text style={styles.offlineButtonText}>
-            📋 Offline Queue {pendingFormsCount > 0 ? `(${pendingFormsCount})` : ''}
+            📋 Offline Queue{' '}
+            {pendingFormsCount > 0 ? `(${pendingFormsCount})` : ''}
           </Text>
         </TouchableOpacity>
       </View>

@@ -13,14 +13,17 @@ const FormWithValidation: React.FC = () => {
 
   const handleSubmit = async () => {
     setSubmitting(true);
-    
+
     try {
       const isValid = validateAllFields();
-      
+
       if (isValid) {
         Alert.alert('Success', 'Form submitted successfully!');
       } else {
-        Alert.alert('Validation Error', 'Please check the form and fix any errors.');
+        Alert.alert(
+          'Validation Error',
+          'Please check the form and fix any errors.',
+        );
       }
     } catch (error) {
       Alert.alert('Error', 'An error occurred while submitting the form.');
@@ -31,7 +34,7 @@ const FormWithValidation: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <ScrollView 
+      <ScrollView
         contentContainerStyle={styles.scrollContainer}
         showsVerticalScrollIndicator={false}
       >
@@ -40,11 +43,11 @@ const FormWithValidation: React.FC = () => {
           <Text style={styles.subtitle}>
             This form demonstrates advanced validation with business logic
           </Text>
-          
-          {customerRegistrationFields.map((field) => (
+
+          {customerRegistrationFields.map(field => (
             <DynamicField key={field.name} field={field} />
           ))}
-          
+
           <Button
             title={submitting ? 'Submitting...' : 'Submit Registration'}
             onPress={handleSubmit}

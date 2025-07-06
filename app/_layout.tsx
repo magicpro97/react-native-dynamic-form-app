@@ -7,35 +7,35 @@ export default function RootLayout() {
     <ToastProvider>
       <SyncProvider>
         <Stack>
-          <Stack.Screen 
-            name="index" 
-            options={{ 
+          <Stack.Screen
+            name='index'
+            options={{
               title: 'Login',
-              headerShown: false 
-            }} 
+              headerShown: false,
+            }}
           />
-          <Stack.Screen 
-            name="home" 
-            options={{ 
+          <Stack.Screen
+            name='home'
+            options={{
               title: 'Home',
-              headerShown: false 
-            }} 
+              headerShown: false,
+            }}
           />
-          <Stack.Screen 
-            name="form" 
-            options={{ 
+          <Stack.Screen
+            name='form'
+            options={{
               title: 'Dynamic Form',
               headerShown: true,
-              headerBackTitle: 'Back'
-            }} 
+              headerBackTitle: 'Back',
+            }}
           />
-          <Stack.Screen 
-            name="validation-demo" 
-            options={{ 
+          <Stack.Screen
+            name='validation-demo'
+            options={{
               title: 'Validation Demo',
               headerShown: true,
-              headerBackTitle: 'Back'
-            }} 
+              headerBackTitle: 'Back',
+            }}
           />
         </Stack>
       </SyncProvider>

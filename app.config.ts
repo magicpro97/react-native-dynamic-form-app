@@ -12,38 +12,38 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   splash: {
     image: './assets/splash.png',
     resizeMode: 'contain',
-    backgroundColor: '#ffffff'
+    backgroundColor: '#ffffff',
   },
-  assetBundlePatterns: [
-    '**/*'
-  ],
+  assetBundlePatterns: ['**/*'],
   ios: {
     bundleIdentifier: 'com.dynamicformapp.app',
     buildNumber: '1.0.0',
     supportsTablet: true,
     infoPlist: {
-      NSCameraUsageDescription: 'This app needs access to camera to capture photos for form fields',
-      NSPhotoLibraryUsageDescription: 'This app needs access to photo library to select images for form fields'
+      NSCameraUsageDescription:
+        'This app needs access to camera to capture photos for form fields',
+      NSPhotoLibraryUsageDescription:
+        'This app needs access to photo library to select images for form fields',
     },
     config: {
-      usesNonExemptEncryption: false
-    }
+      usesNonExemptEncryption: false,
+    },
   },
   android: {
     package: 'com.dynamicformapp.app',
     versionCode: 1,
     adaptiveIcon: {
       foregroundImage: './assets/adaptive-icon.png',
-      backgroundColor: '#FFFFFF'
+      backgroundColor: '#FFFFFF',
     },
     permissions: [
       'android.permission.CAMERA',
       'android.permission.READ_EXTERNAL_STORAGE',
-      'android.permission.WRITE_EXTERNAL_STORAGE'
-    ]
+      'android.permission.WRITE_EXTERNAL_STORAGE',
+    ],
   },
   web: {
-    favicon: './assets/favicon.png'
+    favicon: './assets/favicon.png',
   },
   plugins: [
     'expo-router',
@@ -51,17 +51,19 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     [
       'expo-image-picker',
       {
-        photosPermission: 'The app accesses your photos to let you select images for form fields.',
-        cameraPermission: 'The app accesses your camera to let you take photos for form fields.'
-      }
-    ]
+        photosPermission:
+          'The app accesses your photos to let you select images for form fields.',
+        cameraPermission:
+          'The app accesses your camera to let you take photos for form fields.',
+      },
+    ],
   ],
   experiments: {
-    typedRoutes: true
+    typedRoutes: true,
   },
   extra: {
     eas: {
-      projectId: 'your-project-id-here'
-    }
-  }
+      projectId: 'your-project-id-here',
+    },
+  },
 });

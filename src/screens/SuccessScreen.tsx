@@ -31,24 +31,24 @@ const SuccessScreen: React.FC = () => {
             Submitted at: {new Date(Number(submissionTime)).toLocaleString()}
           </Text>
         )}
-        
+
         <View style={styles.buttonContainer}>
-          <TouchableOpacity 
-            style={[styles.button, styles.primaryButton]} 
+          <TouchableOpacity
+            style={[styles.button, styles.primaryButton]}
             onPress={handleGoHome}
           >
             <Text style={styles.primaryButtonText}>Go to Home</Text>
           </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={[styles.button, styles.secondaryButton]} 
+
+          <TouchableOpacity
+            style={[styles.button, styles.secondaryButton]}
             onPress={handleSubmitAnother}
           >
             <Text style={styles.secondaryButtonText}>Submit Another Form</Text>
           </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={[styles.button, styles.secondaryButton]} 
+
+          <TouchableOpacity
+            style={[styles.button, styles.secondaryButton]}
             onPress={handleViewOfflineQueue}
           >
             <Text style={styles.secondaryButtonText}>View Offline Queue</Text>

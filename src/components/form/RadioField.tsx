@@ -19,7 +19,7 @@ export const RadioField: React.FC<RadioFieldProps> = ({ field }) => {
         {field.required && <Text style={styles.required}> *</Text>}
       </Text>
       <View style={styles.optionsContainer}>
-        {field.options?.map((option) => (
+        {field.options?.map(option => (
           <TouchableOpacity
             key={option.value}
             style={styles.option}

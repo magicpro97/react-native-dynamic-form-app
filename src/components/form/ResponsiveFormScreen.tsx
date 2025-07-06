@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  ScrollView, 
-  StyleSheet, 
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
   SafeAreaView,
   KeyboardAvoidingView,
   Platform,
@@ -18,7 +18,14 @@ import { validateForm, formatFormData } from '../../utils/formValidation';
 import { saveOfflineForm } from '../../utils/storage';
 import { submitFormAPI } from '../../services/api';
 import { useResponsive } from '../../hooks/useResponsive';
-import { colors, spacing, borderRadius, fontSize, fontWeight, shadows } from '../../theme';
+import {
+  colors,
+  spacing,
+  borderRadius,
+  fontSize,
+  fontWeight,
+  shadows,
+} from '../../theme';
 import { Card, Button, Typography } from '../ui';
 import formData from '../../assets/form.json';
 
@@ -27,39 +34,42 @@ const ResponsiveFormContent: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const formConfig: FormConfig = formData as FormConfig;
   const router = useRouter();
-  const { 
-    isTablet, 
-    isLandscape, 
-    getColumns, 
-    getPadding, 
-    getFontSize, 
-    getSpacing 
+  const {
+    isTablet,
+    isLandscape,
+    getColumns,
+    getPadding,
+    getFontSize,
+    getSpacing,
   } = useResponsive();
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    
+
     try {
       const validation = validateForm(formConfig.fields, formState);
-      
+
       if (!validation.isValid) {
-        Object.keys(validation.errors).forEach((fieldName) => {
+        Object.keys(validation.errors).forEach(fieldName => {
           setError(fieldName, validation.errors[fieldName]);
         });
-        Alert.alert('Validation Error', 'Please correct the errors and try again.');
+        Alert.alert(
+          'Validation Error',
+          'Please correct the errors and try again.',
+        );
         return;
       }
 
       const submissionData = formatFormData(formConfig.fields, formState);
       const formId = saveOfflineForm(submissionData, formConfig.title);
       const submissionTime = Date.now();
-      
+
       try {
         const response = await submitFormAPI(submissionData);
-        
+
         if (response.success) {
           console.log('Form submitted successfully:', response.data);
-          
+
           router.push({
             pathname: '/success',
             params: {
@@ -67,19 +77,21 @@ const ResponsiveFormContent: React.FC = () => {
               submissionTime: submissionTime.toString(),
             },
           });
-          
+
           resetForm();
         } else {
-          Alert.alert('Submission Failed', response.message + ' Form has been saved locally.');
+          Alert.alert(
+            'Submission Failed',
+            response.message + ' Form has been saved locally.',
+          );
         }
       } catch (error) {
         console.error('Online submission failed:', error);
         Alert.alert(
           'Saved Offline',
-          'Unable to submit online right now. Your form has been saved locally and will be synced when connection is available.'
+          'Unable to submit online right now. Your form has been saved locally and will be synced when connection is available.',
         );
       }
-      
     } catch (error) {
       Alert.alert('Error', 'Failed to save form. Please try again.');
       console.error('Form submission error:', error);
@@ -89,44 +101,53 @@ const ResponsiveFormContent: React.FC = () => {
   };
 
   const handleReset = () => {
-    Alert.alert(
-      'Reset Form',
-      'Are you sure you want to reset all fields?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Reset', onPress: resetForm, style: 'destructive' },
-      ]
-    );
+    Alert.alert('Reset Form', 'Are you sure you want to reset all fields?', [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Reset', onPress: resetForm, style: 'destructive' },
+    ]);
   };
 
-  const styles = getStyles(isTablet, isLandscape, getPadding, getFontSize, getSpacing);
+  const styles = getStyles(
+    isTablet,
+    isLandscape,
+    getPadding,
+    getFontSize,
+    getSpacing,
+  );
   const columns = getColumns();
 
   // Render form fields in grid or list layout
   const renderFormField = ({ item, index }: { item: any; index: number }) => (
-    <View style={[styles.fieldWrapper, { flex: isTablet && isLandscape ? 1 / columns : 1 }]}>
+    <View
+      style={[
+        styles.fieldWrapper,
+        { flex: isTablet && isLandscape ? 1 / columns : 1 },
+      ]}
+    >
       <DynamicField key={item.name} field={item} />
     </View>
   );
 
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView 
+      <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardAvoidingView}
       >
-        <ScrollView 
-          style={styles.scrollView} 
+        <ScrollView
+          style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
           {/* Header */}
           <View style={styles.header}>
-            <Typography variant="h2" style={styles.title}>
+            <Typography variant='h2' style={styles.title}>
               {formConfig.title}
             </Typography>
-            <Typography variant="body2" color={colors.textSecondary}>
-              {isTablet ? 'Complete the form below with touch-friendly inputs' : 'Fill out all required fields'}
+            <Typography variant='body2' color={colors.textSecondary}>
+              {isTablet
+                ? 'Complete the form below with touch-friendly inputs'
+                : 'Fill out all required fields'}
             </Typography>
           </View>
 
@@ -137,13 +158,13 @@ const ResponsiveFormContent: React.FC = () => {
                 data={formConfig.fields}
                 renderItem={renderFormField}
                 numColumns={columns}
-                keyExtractor={(item) => item.name}
+                keyExtractor={item => item.name}
                 contentContainerStyle={styles.gridContainer}
                 scrollEnabled={false}
               />
             ) : (
               <View style={styles.listContainer}>
-                {formConfig.fields.map((field) => (
+                {formConfig.fields.map(field => (
                   <View key={field.name} style={styles.fieldWrapper}>
                     <DynamicField field={field} />
                   </View>
@@ -163,13 +184,13 @@ const ResponsiveFormContent: React.FC = () => {
                 fullWidth={!isTablet || !isLandscape}
                 style={styles.submitButton}
               />
-              
+
               {isTablet && isLandscape && <View style={styles.buttonSpacer} />}
-              
+
               <Button
-                title="Reset Form"
+                title='Reset Form'
                 onPress={handleReset}
-                variant="outline"
+                variant='outline'
                 disabled={isSubmitting}
                 size={isTablet ? 'large' : 'medium'}
                 fullWidth={!isTablet || !isLandscape}
@@ -191,7 +212,13 @@ export default function ResponsiveFormScreen() {
   );
 }
 
-const getStyles = (isTablet: boolean, isLandscape: boolean, getPadding: Function, getFontSize: Function, getSpacing: Function) => {
+const getStyles = (
+  isTablet: boolean,
+  isLandscape: boolean,
+  getPadding: Function,
+  getFontSize: Function,
+  getSpacing: Function,
+) => {
   return StyleSheet.create({
     container: {
       flex: 1,

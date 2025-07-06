@@ -2,7 +2,10 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { Toast } from '../components/ui/Toast';
 
 interface ToastContextType {
-  showToast: (message: string, type: 'success' | 'error' | 'info' | 'warning') => void;
+  showToast: (
+    message: string,
+    type: 'success' | 'error' | 'info' | 'warning'
+  ) => void;
   hideToast: () => void;
 }
 
@@ -16,7 +19,9 @@ export const useToast = () => {
   return context;
 };
 
-export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const ToastProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [toastConfig, setToastConfig] = useState<{
     message: string;
     type: 'success' | 'error' | 'info' | 'warning';
@@ -27,7 +32,10 @@ export const ToastProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     visible: false,
   });
 
-  const showToast = (message: string, type: 'success' | 'error' | 'info' | 'warning') => {
+  const showToast = (
+    message: string,
+    type: 'success' | 'error' | 'info' | 'warning',
+  ) => {
     setToastConfig({ message, type, visible: true });
   };
 

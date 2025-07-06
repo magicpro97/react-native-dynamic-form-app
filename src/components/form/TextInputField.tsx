@@ -21,7 +21,7 @@ export const TextInputField: React.FC<TextInputFieldProps> = ({ field }) => {
       <TextInput
         style={[styles.input, error && styles.inputError]}
         value={value}
-        onChangeText={(text) => setField(field.name, text)}
+        onChangeText={text => setField(field.name, text)}
         placeholder={field.placeholder}
         keyboardType={field.type === 'email' ? 'email-address' : 'default'}
         autoCapitalize={field.type === 'email' ? 'none' : 'words'}

@@ -17,29 +17,33 @@ const BREAKPOINTS = {
 export const useResponsive = () => {
   const { width, height } = useWindowDimensions();
   const [orientation, setOrientation] = useState<OrientationType>('portrait');
-  
+
   useEffect(() => {
     const getOrientation = async () => {
       const orientationInfo = await ScreenOrientation.getOrientationAsync();
       setOrientation(
         orientationInfo === ScreenOrientation.Orientation.PORTRAIT_UP ||
-        orientationInfo === ScreenOrientation.Orientation.PORTRAIT_DOWN
+          orientationInfo === ScreenOrientation.Orientation.PORTRAIT_DOWN
           ? 'portrait'
-          : 'landscape'
+          : 'landscape',
       );
     };
-    
+
     getOrientation();
-    
-    const subscription = ScreenOrientation.addOrientationChangeListener((event) => {
-      setOrientation(
-        event.orientationInfo.orientation === ScreenOrientation.Orientation.PORTRAIT_UP ||
-        event.orientationInfo.orientation === ScreenOrientation.Orientation.PORTRAIT_DOWN
-          ? 'portrait'
-          : 'landscape'
-      );
-    });
-    
+
+    const subscription = ScreenOrientation.addOrientationChangeListener(
+      event => {
+        setOrientation(
+          event.orientationInfo.orientation ===
+            ScreenOrientation.Orientation.PORTRAIT_UP ||
+            event.orientationInfo.orientation ===
+              ScreenOrientation.Orientation.PORTRAIT_DOWN
+            ? 'portrait'
+            : 'landscape',
+        );
+      },
+    );
+
     return () => {
       ScreenOrientation.removeOrientationChangeListener(subscription);
     };

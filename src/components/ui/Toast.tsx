@@ -15,7 +15,7 @@ export const Toast: React.FC<ToastProps> = ({
   type,
   visible,
   duration = 3000,
-  onHide
+  onHide,
 }) => {
   const [fadeAnim] = useState(new Animated.Value(0));
   const [slideAnim] = useState(new Animated.Value(-100));

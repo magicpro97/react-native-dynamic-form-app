@@ -26,14 +26,16 @@ export const CheckboxField: React.FC<CheckboxFieldProps> = ({ field }) => {
         {field.required && <Text style={styles.required}> *</Text>}
       </Text>
       <View style={styles.optionsContainer}>
-        {field.options?.map((option) => (
+        {field.options?.map(option => (
           <TouchableOpacity
             key={option.value}
             style={styles.option}
             onPress={() => handleToggle(option.value)}
           >
             <View style={styles.checkboxContainer}>
-              <View style={[styles.checkboxOuter, error && styles.checkboxError]}>
+              <View
+                style={[styles.checkboxOuter, error && styles.checkboxError]}
+              >
                 {values.includes(option.value) && (
                   <Text style={styles.checkmark}>✓</Text>
                 )}

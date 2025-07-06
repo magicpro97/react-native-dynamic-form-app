@@ -17,10 +17,10 @@ export default function LoginScreen() {
       Alert.alert('Validation', 'Please enter both username and password.');
       return;
     }
-    
+
     // Store mock token using MMKV
     storage.set('token', 'mock-token');
-    
+
     // Navigate to home screen
     router.replace('/home');
   };
@@ -30,19 +30,19 @@ export default function LoginScreen() {
       <Text style={styles.title}>Login</Text>
       <TextInput
         style={styles.input}
-        placeholder="Username"
+        placeholder='Username'
         value={username}
         onChangeText={setUsername}
-        autoCapitalize="none"
+        autoCapitalize='none'
       />
       <TextInput
         style={styles.input}
-        placeholder="Password"
+        placeholder='Password'
         value={password}
         onChangeText={setPassword}
         secureTextEntry
       />
-      <Button title="Login" onPress={handleLogin} />
+      <Button title='Login' onPress={handleLogin} />
     </View>
   );
 }

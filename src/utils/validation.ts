@@ -2,7 +2,15 @@ import { FormState, FormField } from '../types/form';
 
 // Validation rule types
 export interface ValidationRule {
-  type: 'required' | 'email' | 'phone' | 'minLength' | 'maxLength' | 'pattern' | 'custom' | 'conditional';
+  type:
+    | 'required'
+    | 'email'
+    | 'phone'
+    | 'minLength'
+    | 'maxLength'
+    | 'pattern'
+    | 'custom'
+    | 'conditional';
   message: string;
   value?: any;
   validator?: (value: any, formState: FormState) => boolean;
@@ -86,7 +94,7 @@ export const validateField = (
   fieldName: string,
   value: any,
   fieldConfig: FieldConfig,
-  formState: FormState
+  formState: FormState,
 ): string | null => {
   // Skip validation if field is empty and not required
   if (!fieldConfig.validation || fieldConfig.validation.length === 0) {
@@ -100,7 +108,7 @@ export const validateField = (
     }
 
     let isValid = true;
-    let errorMessage = rule.message;
+    const errorMessage = rule.message;
 
     switch (rule.type) {
       case 'required':
@@ -174,12 +182,17 @@ export const validateField = (
 // Validate entire form
 export const validateForm = (
   formState: FormState,
-  fieldConfigs: FieldConfig[]
+  fieldConfigs: FieldConfig[],
 ): { [key: string]: string } => {
   const errors: { [key: string]: string } = {};
 
   for (const config of fieldConfigs) {
-    const error = validateField(config.name, formState[config.name], config, formState);
+    const error = validateField(
+      config.name,
+      formState[config.name],
+      config,
+      formState,
+    );
     if (error) {
       errors[config.name] = error;
     }
@@ -210,10 +223,10 @@ export const businessValidators = {
     const position = formState.position;
 
     const minSalaries: { [key: string]: number } = {
-      'intern': 1000,
-      'junior': 3000,
-      'senior': 5000,
-      'manager': 8000,
+      intern: 1000,
+      junior: 3000,
+      senior: 5000,
+      manager: 8000,
     };
 
     const minSalary = minSalaries[position];
@@ -235,7 +248,10 @@ export const businessValidators = {
   },
 
   // Password confirmation
-  validatePasswordConfirmation: (confirmPassword: string, formState: FormState) => {
+  validatePasswordConfirmation: (
+    confirmPassword: string,
+    formState: FormState,
+  ) => {
     if (confirmPassword !== formState.password) {
       return 'Passwords do not match';
     }
@@ -280,7 +296,10 @@ export const businessValidators = {
       return 'Signature is required';
     }
     // Check if signature is just the default/empty signature
-    if (signature === 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==') {
+    if (
+      signature ===
+      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=='
+    ) {
       return 'Please provide a valid signature';
     }
     return null;
@@ -318,7 +337,7 @@ export const exampleFieldConfigs: FieldConfig[] = [
       {
         type: 'custom',
         message: 'Age must be between 0 and 120',
-        validator: (value) => validators.age(value),
+        validator: value => validators.age(value),
       },
     ],
     customValidation: businessValidators.validateAge,
@@ -337,7 +356,7 @@ export const exampleFieldConfigs: FieldConfig[] = [
       {
         type: 'custom',
         message: 'Please enter a valid amount',
-        validator: (value) => validators.positiveNumber(value),
+        validator: value => validators.positiveNumber(value),
       },
     ],
     customValidation: businessValidators.validateSalary,
@@ -379,8 +398,8 @@ export const exampleFieldConfigs: FieldConfig[] = [
       {
         type: 'conditional',
         message: 'You must agree to the terms and conditions',
-        condition: (formState) => formState.userType === 'premium',
-        validator: (value) => value === true,
+        condition: formState => formState.userType === 'premium',
+        validator: value => value === true,
       },
     ],
   },

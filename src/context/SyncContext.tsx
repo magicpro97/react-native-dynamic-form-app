@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from 'react';
 import { backgroundSyncService, SyncStats } from '../services/backgroundSync';
 import { getPendingFormsCount } from '../utils/storage';
 import { useToast } from './ToastContext';
@@ -23,7 +29,9 @@ export const useSyncContext = () => {
   return context;
 };
 
-export const SyncProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const SyncProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncStats, setSyncStats] = useState<SyncStats | null>(null);
   const [pendingFormsCount, setPendingFormsCount] = useState(0);
@@ -39,7 +47,7 @@ export const SyncProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setSyncStats(stats);
     setIsSyncing(false);
     refreshPendingCount();
-    
+
     // Show toast notification
     if (stats.successful > 0) {
       showToast(`Synced ${stats.successful} forms successfully`, 'success');

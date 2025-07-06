@@ -57,7 +57,9 @@ const errorReducer = (state: FormErrors, action: any): FormErrors => {
 };
 
 // Form Provider
-export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const FormProvider: React.FC<{ children: ReactNode }> = ({
+  children,
+}) => {
   const [formState, dispatch] = useReducer(formReducer, {});
   const [errors, errorDispatch] = useReducer(errorReducer, {});
 

@@ -1,15 +1,18 @@
 import { FormField, FormState, FormValidation } from '../types/form';
 
-export const validateForm = (formConfig: FormField[], formState: FormState): FormValidation => {
+export const validateForm = (
+  formConfig: FormField[],
+  formState: FormState,
+): FormValidation => {
   const errors: { [key: string]: string } = {};
 
-  formConfig.forEach((field) => {
+  formConfig.forEach(field => {
     const value = formState[field.name];
-    
+
     if (field.required) {
       // Handle different field types for required validation
       let isEmpty = false;
-      
+
       if (Array.isArray(value)) {
         isEmpty = value.length === 0;
       } else if (typeof value === 'string') {
@@ -17,7 +20,7 @@ export const validateForm = (formConfig: FormField[], formState: FormState): For
       } else {
         isEmpty = !value;
       }
-      
+
       if (isEmpty) {
         errors[field.name] = `${field.label} is required`;
       }
@@ -37,17 +40,21 @@ export const validateForm = (formConfig: FormField[], formState: FormState): For
         errors[field.name] = 'Please enter a valid number';
       }
     }
-    
+
     // Signature validation - check if signature exists
     if (field.type === 'signature' && field.required && value) {
       if (typeof value === 'string' && value.length < 100) {
         errors[field.name] = 'Please provide a signature';
       }
     }
-    
+
     // Photo validation - check if photo exists
     if (field.type === 'photo' && field.required && value) {
-      if (typeof value === 'string' && !value.startsWith('data:') && !value.startsWith('file://')) {
+      if (
+        typeof value === 'string' &&
+        !value.startsWith('data:') &&
+        !value.startsWith('file://')
+      ) {
         errors[field.name] = 'Please take or select a photo';
       }
     }
@@ -61,7 +68,7 @@ export const validateForm = (formConfig: FormField[], formState: FormState): For
 
 export const getFieldValue = (field: FormField, formState: FormState): any => {
   const value = formState[field.name];
-  
+
   switch (field.type) {
     case 'checkbox':
       return value || [];
@@ -76,12 +83,15 @@ export const getFieldValue = (field: FormField, formState: FormState): any => {
   }
 };
 
-export const formatFormData = (formConfig: FormField[], formState: FormState): any => {
+export const formatFormData = (
+  formConfig: FormField[],
+  formState: FormState,
+): any => {
   const formattedData: any = {};
-  
-  formConfig.forEach((field) => {
+
+  formConfig.forEach(field => {
     const value = getFieldValue(field, formState);
-    
+
     // Add metadata for special fields
     if (field.type === 'signature' || field.type === 'photo') {
       formattedData[field.name] = {
@@ -93,13 +103,13 @@ export const formatFormData = (formConfig: FormField[], formState: FormState): a
       formattedData[field.name] = value;
     }
   });
-  
+
   // Add form metadata
   formattedData._metadata = {
     submittedAt: new Date().toISOString(),
     formVersion: '1.0',
     platform: 'web', // or 'mobile'
   };
-  
+
   return formattedData;
 };

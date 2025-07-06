@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
 import { FormField } from '../../types/form';
 import { useForm } from '../../context/FormContext';
 
@@ -23,7 +29,7 @@ export const PasswordField: React.FC<PasswordFieldProps> = ({ field }) => {
         {field.label}
         {field.required && <Text style={styles.required}> *</Text>}
       </Text>
-      
+
       <View style={styles.passwordContainer}>
         <TextInput
           style={[styles.input, error && styles.inputError]}
@@ -31,19 +37,17 @@ export const PasswordField: React.FC<PasswordFieldProps> = ({ field }) => {
           onChangeText={handleTextChange}
           placeholder={field.placeholder}
           secureTextEntry={!showPassword}
-          autoCapitalize="none"
+          autoCapitalize='none'
           autoCorrect={false}
         />
         <TouchableOpacity
           style={styles.eyeButton}
           onPress={() => setShowPassword(!showPassword)}
         >
-          <Text style={styles.eyeText}>
-            {showPassword ? '🙈' : '👁️'}
-          </Text>
+          <Text style={styles.eyeText}>{showPassword ? '🙈' : '👁️'}</Text>
         </TouchableOpacity>
       </View>
-      
+
       {error && <Text style={styles.errorText}>{error}</Text>}
     </View>
   );

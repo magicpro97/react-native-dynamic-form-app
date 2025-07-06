@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { 
-  View, 
-  Text, 
-  ScrollView, 
-  StyleSheet, 
-  Button, 
-  Alert, 
-  SafeAreaView 
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  Button,
+  Alert,
+  SafeAreaView,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { FormProvider, useForm } from '../context/FormContext';
@@ -25,34 +25,37 @@ const FormContent: React.FC = () => {
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    
+
     try {
       // Validate form
       const validation = validateForm(formConfig.fields, formState);
-      
+
       if (!validation.isValid) {
         // Set validation errors
-        Object.keys(validation.errors).forEach((fieldName) => {
+        Object.keys(validation.errors).forEach(fieldName => {
           setError(fieldName, validation.errors[fieldName]);
         });
-        Alert.alert('Validation Error', 'Please correct the errors and try again.');
+        Alert.alert(
+          'Validation Error',
+          'Please correct the errors and try again.',
+        );
         return;
       }
 
       // Format form data
       const submissionData = formatFormData(formConfig.fields, formState);
-      
+
       // Save to offline storage first
       const formId = saveOfflineForm(submissionData, formConfig.title);
       const submissionTime = Date.now();
-      
+
       try {
         // Try to submit online
         const response = await submitFormAPI(submissionData);
-        
+
         if (response.success) {
           console.log('Form submitted successfully:', response.data);
-          
+
           // Navigate to success screen
           router.push({
             pathname: '/success',
@@ -61,20 +64,22 @@ const FormContent: React.FC = () => {
               submissionTime: submissionTime.toString(),
             },
           });
-          
+
           // Reset form
           resetForm();
         } else {
-          Alert.alert('Submission Failed', response.message + ' Form has been saved locally.');
+          Alert.alert(
+            'Submission Failed',
+            response.message + ' Form has been saved locally.',
+          );
         }
       } catch (error) {
         console.error('Online submission failed:', error);
         Alert.alert(
           'Saved Offline',
-          'Unable to submit online right now. Your form has been saved locally and will be synced when connection is available.'
+          'Unable to submit online right now. Your form has been saved locally and will be synced when connection is available.',
         );
       }
-      
     } catch (error) {
       Alert.alert('Error', 'Failed to save form. Please try again.');
       console.error('Form submission error:', error);
@@ -84,27 +89,26 @@ const FormContent: React.FC = () => {
   };
 
   const handleReset = () => {
-    Alert.alert(
-      'Reset Form',
-      'Are you sure you want to reset all fields?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Reset', onPress: resetForm, style: 'destructive' },
-      ]
-    );
+    Alert.alert('Reset Form', 'Are you sure you want to reset all fields?', [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Reset', onPress: resetForm, style: 'destructive' },
+    ]);
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.content}
+      >
         <Text style={styles.title}>{formConfig.title}</Text>
-        
+
         <View style={styles.form}>
-          {formConfig.fields.map((field) => (
+          {formConfig.fields.map(field => (
             <DynamicField key={field.name} field={field} />
           ))}
         </View>
-        
+
         <View style={styles.actions}>
           <Button
             title={isSubmitting ? 'Submitting...' : 'Submit Form'}
@@ -113,9 +117,9 @@ const FormContent: React.FC = () => {
           />
           <View style={styles.spacing} />
           <Button
-            title="Reset Form"
+            title='Reset Form'
             onPress={handleReset}
-            color="#ff4444"
+            color='#ff4444'
             disabled={isSubmitting}
           />
         </View>

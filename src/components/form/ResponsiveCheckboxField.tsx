@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, FlatList, ScrollView } from 'react-native';
 import { FormField } from '../../types/form';
 import { useForm } from '../../context/FormContext';
 import { useResponsive } from '../../hooks/useResponsive';
-import { colors, spacing, borderRadius, fontSize, fontWeight } from '../../theme';
+import { colors, fontWeight } from '../../theme';
 import { RiskIndicator, getFieldRiskLevel } from '../ui/RiskIndicator';
 import { Button } from '../ui';
 
@@ -12,16 +12,19 @@ interface ResponsiveCheckboxFieldProps {
   error?: string;
 }
 
-export const ResponsiveCheckboxField: React.FC<ResponsiveCheckboxFieldProps> = ({ field, error }) => {
+export const ResponsiveCheckboxField: React.FC<
+  ResponsiveCheckboxFieldProps
+> = ({ field, error }) => {
   const { formState, setField } = useForm();
-  const { isTablet, getFontSize, getSpacing, getColumns, isLandscape } = useResponsive();
-  
+  const { isTablet, getFontSize, getSpacing, getColumns, isLandscape } =
+    useResponsive();
+
   // Handle both single checkbox (boolean) and multiple checkboxes (array)
   const isSingleCheckbox = !field.options || field.options.length === 0;
-  const value: string[] | boolean = isSingleCheckbox 
-    ? (formState[field.name] || false)
-    : (formState[field.name] || []);
-  
+  const value: string[] | boolean = isSingleCheckbox
+    ? formState[field.name] || false
+    : formState[field.name] || [];
+
   const riskLevel = getFieldRiskLevel(field);
   const styles = getStyles(isTablet, getFontSize, getSpacing, isLandscape);
   const columns = getColumns();
@@ -38,7 +41,11 @@ export const ResponsiveCheckboxField: React.FC<ResponsiveCheckboxFieldProps> = (
     setField(field.name, !formState[field.name]);
   };
 
-  const renderCheckboxOption = ({ item, index }: { item: any; index: number }) => {
+  const renderCheckboxOption = ({
+    item,
+  }: {
+    item: { value: string; label: string };
+  }) => {
     const currentValue = formState[field.name] || [];
     const isSelected = currentValue.includes(item.value);
     return (
@@ -61,9 +68,9 @@ export const ResponsiveCheckboxField: React.FC<ResponsiveCheckboxFieldProps> = (
       <View style={styles.container}>
         <View style={styles.fieldContainer}>
           <View style={styles.labelContainer}>
-            <RiskIndicator level={riskLevel} size="small" showLabel={false} />
+            <RiskIndicator level={riskLevel} size='small' showLabel={false} />
           </View>
-          
+
           <View style={styles.optionsContainer}>
             <Button
               title={`${value ? '☑️' : '☐'} ${field.label}`}
@@ -74,7 +81,7 @@ export const ResponsiveCheckboxField: React.FC<ResponsiveCheckboxFieldProps> = (
               style={styles.checkboxButton}
             />
           </View>
-          
+
           {error && (
             <View style={styles.errorContainer}>
               <Text style={styles.errorText}>❌ {error}</Text>
@@ -93,25 +100,26 @@ export const ResponsiveCheckboxField: React.FC<ResponsiveCheckboxFieldProps> = (
             {field.label}
             {field.required && <Text style={styles.required}> *</Text>}
           </Text>
-          <RiskIndicator level={riskLevel} size="small" showLabel={false} />
+          <RiskIndicator level={riskLevel} size='small' showLabel={false} />
         </View>
-        
+
         <Text style={styles.helperText}>
-          Select multiple options {field.required ? '(at least one required)' : '(optional)'}
+          Select multiple options{' '}
+          {field.required ? '(at least one required)' : '(optional)'}
         </Text>
-        
+
         <View style={styles.optionsContainer}>
           {isTablet && isLandscape ? (
             <FlatList
               data={field.options}
               renderItem={renderCheckboxOption}
               numColumns={columns}
-              keyExtractor={(item) => item.value}
+              keyExtractor={item => item.value}
               contentContainerStyle={styles.gridContainer}
               scrollEnabled={false}
             />
           ) : (
-            <ScrollView 
+            <ScrollView
               horizontal={false}
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.listContainer}
@@ -135,13 +143,13 @@ export const ResponsiveCheckboxField: React.FC<ResponsiveCheckboxFieldProps> = (
             </ScrollView>
           )}
         </View>
-        
+
         {Array.isArray(value) && value.length > 0 && (
           <Text style={styles.selectedText}>
             Selected: {value.length} item{value.length > 1 ? 's' : ''}
           </Text>
         )}
-        
+
         {error && (
           <View style={styles.errorContainer}>
             <Text style={styles.errorText}>❌ {error}</Text>
@@ -152,7 +160,12 @@ export const ResponsiveCheckboxField: React.FC<ResponsiveCheckboxFieldProps> = (
   );
 };
 
-const getStyles = (isTablet: boolean, getFontSize: Function, getSpacing: Function, isLandscape: boolean) => {
+const getStyles = (
+  isTablet: boolean,
+  getFontSize: (size: 'small' | 'medium' | 'large' | 'xlarge') => number,
+  getSpacing: (size: 'xs' | 'sm' | 'md' | 'lg' | 'xl') => number,
+  _isLandscape: boolean,
+) => {
   return StyleSheet.create({
     container: {
       flex: 1,

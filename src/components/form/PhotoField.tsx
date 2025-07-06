@@ -17,7 +17,10 @@ export const PhotoField: React.FC<PhotoFieldProps> = ({ field }) => {
   const requestPermission = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert('Permission required', 'Please grant photo library access to use this feature.');
+      Alert.alert(
+        'Permission required',
+        'Please grant photo library access to use this feature.',
+      );
       return false;
     }
     return true;
@@ -52,7 +55,10 @@ export const PhotoField: React.FC<PhotoFieldProps> = ({ field }) => {
   const takePhoto = async () => {
     const { status } = await ImagePicker.requestCameraPermissionsAsync();
     if (status !== 'granted') {
-      Alert.alert('Permission required', 'Please grant camera access to use this feature.');
+      Alert.alert(
+        'Permission required',
+        'Please grant camera access to use this feature.',
+      );
       return;
     }
 
@@ -78,15 +84,11 @@ export const PhotoField: React.FC<PhotoFieldProps> = ({ field }) => {
   };
 
   const showImageOptions = () => {
-    Alert.alert(
-      'Select Photo',
-      'Choose an option',
-      [
-        { text: 'Camera', onPress: takePhoto },
-        { text: 'Photo Library', onPress: pickImage },
-        { text: 'Cancel', style: 'cancel' },
-      ]
-    );
+    Alert.alert('Select Photo', 'Choose an option', [
+      { text: 'Camera', onPress: takePhoto },
+      { text: 'Photo Library', onPress: pickImage },
+      { text: 'Cancel', style: 'cancel' },
+    ]);
   };
 
   const removeImage = () => {
@@ -99,28 +101,32 @@ export const PhotoField: React.FC<PhotoFieldProps> = ({ field }) => {
         {field.label}
         {field.required && <Text style={styles.required}> *</Text>}
       </Text>
-      
+
       <View style={[styles.photoContainer, error && styles.photoError]}>
         {value ? (
           <View style={styles.imageContainer}>
             <Image source={{ uri: value }} style={styles.image} />
             <View style={styles.imageActions}>
-              <Button title="Change Photo" onPress={showImageOptions} disabled={loading} />
-              <Button title="Remove" onPress={removeImage} color="#ff4444" />
+              <Button
+                title='Change Photo'
+                onPress={showImageOptions}
+                disabled={loading}
+              />
+              <Button title='Remove' onPress={removeImage} color='#ff4444' />
             </View>
           </View>
         ) : (
           <View style={styles.placeholder}>
             <Text style={styles.placeholderText}>No photo selected</Text>
-            <Button 
-              title={loading ? 'Loading...' : 'Add Photo'} 
-              onPress={showImageOptions} 
+            <Button
+              title={loading ? 'Loading...' : 'Add Photo'}
+              onPress={showImageOptions}
               disabled={loading}
             />
           </View>
         )}
       </View>
-      
+
       {error && <Text style={styles.errorText}>{error}</Text>}
     </View>
   );

@@ -23,10 +23,10 @@ export const SelectField: React.FC<SelectFieldProps> = ({ field }) => {
         <Picker
           selectedValue={value}
           style={styles.picker}
-          onValueChange={(itemValue) => setField(field.name, itemValue)}
+          onValueChange={itemValue => setField(field.name, itemValue)}
         >
-          <Picker.Item label="Select an option..." value="" />
-          {field.options?.map((option) => (
+          <Picker.Item label='Select an option...' value='' />
+          {field.options?.map(option => (
             <Picker.Item
               key={option.value}
               label={option.label}

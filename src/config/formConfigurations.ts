@@ -92,7 +92,7 @@ export const customerRegistrationFields: FieldConfig[] = [
       {
         type: 'custom',
         message: 'Age must be between 18 and 120',
-        validator: (value) => {
+        validator: value => {
           const age = parseInt(value);
           return age >= 18 && age <= 120;
         },
@@ -126,8 +126,10 @@ export const customerRegistrationFields: FieldConfig[] = [
       {
         type: 'conditional',
         message: 'Company name is required for business customers',
-        condition: (formState) => formState.category === 'business' || formState.category === 'enterprise',
-        validator: (value) => value && value.trim().length > 0,
+        condition: formState =>
+          formState.category === 'business' ||
+          formState.category === 'enterprise',
+        validator: value => value && value.trim().length > 0,
       },
     ],
   },
@@ -149,8 +151,10 @@ export const customerRegistrationFields: FieldConfig[] = [
       },
       {
         type: 'pattern',
-        value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
-        message: 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character',
+        value:
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
+        message:
+          'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character',
       },
     ],
   },
@@ -191,7 +195,7 @@ export const customerRegistrationFields: FieldConfig[] = [
       {
         type: 'custom',
         message: 'You must agree to the terms and conditions',
-        validator: (value) => value === true,
+        validator: value => value === true,
       },
     ],
   },
@@ -263,7 +267,7 @@ export const jobApplicationFields: FieldConfig[] = [
       {
         type: 'custom',
         message: 'Experience must be between 0 and 50 years',
-        validator: (value) => {
+        validator: value => {
           const exp = parseInt(value);
           return exp >= 0 && exp <= 50;
         },
@@ -283,7 +287,7 @@ export const jobApplicationFields: FieldConfig[] = [
       {
         type: 'custom',
         message: 'Please enter a valid salary amount',
-        validator: (value) => {
+        validator: value => {
           const salary = parseFloat(value);
           return salary > 0 && salary <= 1000000;
         },
@@ -406,8 +410,8 @@ export const eventRegistrationFields: FieldConfig[] = [
       {
         type: 'conditional',
         message: 'Emergency contact is required for VIP tickets',
-        condition: (formState) => formState.ticketType === 'vip',
-        validator: (value) => value && value.trim().length > 0,
+        condition: formState => formState.ticketType === 'vip',
+        validator: value => value && value.trim().length > 0,
       },
     ],
   },
@@ -420,8 +424,8 @@ export const eventRegistrationFields: FieldConfig[] = [
       {
         type: 'conditional',
         message: 'Emergency contact phone is required for VIP tickets',
-        condition: (formState) => formState.ticketType === 'vip',
-        validator: (value) => value && value.trim().length > 0,
+        condition: formState => formState.ticketType === 'vip',
+        validator: value => value && value.trim().length > 0,
       },
       {
         type: 'phone',

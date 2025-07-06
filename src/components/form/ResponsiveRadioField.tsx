@@ -3,7 +3,13 @@ import { View, Text, StyleSheet, FlatList, ScrollView } from 'react-native';
 import { FormField, FormErrors } from '../../types/form';
 import { useForm } from '../../context/FormContext';
 import { useResponsive } from '../../hooks/useResponsive';
-import { colors, spacing, borderRadius, fontSize, fontWeight } from '../../theme';
+import {
+  colors,
+  spacing,
+  borderRadius,
+  fontSize,
+  fontWeight,
+} from '../../theme';
 import { RiskIndicator, getFieldRiskLevel } from '../ui/RiskIndicator';
 import { Button } from '../ui';
 
@@ -12,10 +18,14 @@ interface ResponsiveRadioFieldProps {
   error?: string;
 }
 
-export const ResponsiveRadioField: React.FC<ResponsiveRadioFieldProps> = ({ field, error }) => {
+export const ResponsiveRadioField: React.FC<ResponsiveRadioFieldProps> = ({
+  field,
+  error,
+}) => {
   const { formState, setField } = useForm();
-  const { isTablet, getFontSize, getSpacing, getColumns, isLandscape } = useResponsive();
-  
+  const { isTablet, getFontSize, getSpacing, getColumns, isLandscape } =
+    useResponsive();
+
   const value = formState[field.name] || '';
   const riskLevel = getFieldRiskLevel(field);
   const styles = getStyles(isTablet, getFontSize, getSpacing, isLandscape);
@@ -42,21 +52,21 @@ export const ResponsiveRadioField: React.FC<ResponsiveRadioFieldProps> = ({ fiel
             {field.label}
             {field.required && <Text style={styles.required}> *</Text>}
           </Text>
-          <RiskIndicator level={riskLevel} size="small" showLabel={false} />
+          <RiskIndicator level={riskLevel} size='small' showLabel={false} />
         </View>
-        
+
         <View style={styles.optionsContainer}>
           {isTablet && isLandscape ? (
             <FlatList
               data={field.options}
               renderItem={renderRadioOption}
               numColumns={columns}
-              keyExtractor={(item) => item.value}
+              keyExtractor={item => item.value}
               contentContainerStyle={styles.gridContainer}
               scrollEnabled={false}
             />
           ) : (
-            <ScrollView 
+            <ScrollView
               horizontal={false}
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.listContainer}
@@ -76,7 +86,7 @@ export const ResponsiveRadioField: React.FC<ResponsiveRadioFieldProps> = ({ fiel
             </ScrollView>
           )}
         </View>
-        
+
         {error && (
           <View style={styles.errorContainer}>
             <Text style={styles.errorText}>❌ {error}</Text>
@@ -87,7 +97,12 @@ export const ResponsiveRadioField: React.FC<ResponsiveRadioFieldProps> = ({ fiel
   );
 };
 
-const getStyles = (isTablet: boolean, getFontSize: Function, getSpacing: Function, isLandscape: boolean) => {
+const getStyles = (
+  isTablet: boolean,
+  getFontSize: Function,
+  getSpacing: Function,
+  isLandscape: boolean,
+) => {
   return StyleSheet.create({
     container: {
       flex: 1,

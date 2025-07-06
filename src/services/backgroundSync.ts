@@ -1,5 +1,10 @@
 import { isNetworkAvailable, syncFormAPI } from './api';
-import { getPendingForms, updateFormStatus, updateFormData, incrementSyncAttempts } from '../utils/storage';
+import {
+  getPendingForms,
+  updateFormStatus,
+  updateFormData,
+  incrementSyncAttempts,
+} from '../utils/storage';
 import { OfflineFormData } from '../types/form';
 
 // Background sync service
@@ -75,7 +80,7 @@ export class BackgroundSyncService {
     }
 
     this.isSyncing = true;
-    
+
     try {
       // Check network connectivity
       const isOnline = await isNetworkAvailable();
@@ -113,7 +118,7 @@ export class BackgroundSyncService {
       for (const form of pendingForms) {
         try {
           const result = await syncFormAPI(form);
-          
+
           if (result.success) {
             switch (result.action) {
               case 'upload':
@@ -121,7 +126,7 @@ export class BackgroundSyncService {
                 updateFormStatus(form.id, 'synced');
                 successful++;
                 break;
-              
+
               case 'download':
                 // Server version is newer, update local
                 if (result.serverData) {
@@ -130,7 +135,7 @@ export class BackgroundSyncService {
                   successful++;
                 }
                 break;
-              
+
               case 'conflict':
                 // Handle conflict
                 conflicts++;
@@ -141,7 +146,7 @@ export class BackgroundSyncService {
             // Sync failed
             failed++;
             incrementSyncAttempts(form.id);
-            
+
             // Mark as failed if too many attempts
             if ((form.syncAttempts || 0) >= 3) {
               updateFormStatus(form.id, 'failed');
@@ -151,7 +156,7 @@ export class BackgroundSyncService {
           console.error(`Error syncing form ${form.id}:`, error);
           failed++;
           incrementSyncAttempts(form.id);
-          
+
           // Mark as failed if too many attempts
           if ((form.syncAttempts || 0) >= 3) {
             updateFormStatus(form.id, 'failed');
@@ -169,7 +174,7 @@ export class BackgroundSyncService {
 
       console.log('Sync completed:', stats);
       this.notifyListeners(stats);
-      
+
       return stats;
     } finally {
       this.isSyncing = false;

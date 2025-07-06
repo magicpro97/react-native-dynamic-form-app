@@ -15,7 +15,7 @@ const WebSignatureCanvas: React.FC<{
 
   useEffect(() => {
     if (Platform.OS !== 'web') return;
-    
+
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -39,7 +39,7 @@ const WebSignatureCanvas: React.FC<{
 
   const startDrawing = (e: any) => {
     if (Platform.OS !== 'web') return;
-    
+
     setIsDrawing(true);
     setIsEmpty(false);
     const canvas = canvasRef.current;
@@ -79,7 +79,7 @@ const WebSignatureCanvas: React.FC<{
 
   const clearCanvas = () => {
     if (Platform.OS !== 'web') return;
-    
+
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -127,9 +127,9 @@ const WebSignatureCanvas: React.FC<{
         onMouseLeave={stopDrawing}
       />
       <View style={styles.webSignatureActions}>
-        <Button title="Clear" onPress={clearCanvas} />
-        <Button title="Cancel" onPress={onCancel} />
-        <Button title="Save" onPress={saveSignature} />
+        <Button title='Clear' onPress={clearCanvas} />
+        <Button title='Cancel' onPress={onCancel} />
+        <Button title='Save' onPress={saveSignature} />
       </View>
     </View>
   );
@@ -219,10 +219,12 @@ export const SignatureField: React.FC<SignatureFieldProps> = ({ field }) => {
           {field.label}
           {field.required && <Text style={styles.required}> *</Text>}
         </Text>
-        
+
         {!showSignature ? (
           <View>
-            <View style={[styles.signaturePreview, error && styles.signatureError]}>
+            <View
+              style={[styles.signaturePreview, error && styles.signatureError]}
+            >
               {value ? (
                 <Text style={styles.signatureText}>✓ Signature captured</Text>
               ) : (
@@ -243,7 +245,7 @@ export const SignatureField: React.FC<SignatureFieldProps> = ({ field }) => {
             />
           </View>
         )}
-        
+
         {error && <Text style={styles.errorText}>{error}</Text>}
       </View>
     );
@@ -258,7 +260,9 @@ export const SignatureField: React.FC<SignatureFieldProps> = ({ field }) => {
           {field.required && <Text style={styles.required}> *</Text>}
         </Text>
         <View style={[styles.signaturePreview, styles.signatureError]}>
-          <Text style={styles.errorText}>Signature component not available</Text>
+          <Text style={styles.errorText}>
+            Signature component not available
+          </Text>
         </View>
         {error && <Text style={styles.errorText}>{error}</Text>}
       </View>
@@ -271,10 +275,12 @@ export const SignatureField: React.FC<SignatureFieldProps> = ({ field }) => {
         {field.label}
         {field.required && <Text style={styles.required}> *</Text>}
       </Text>
-      
+
       {!showSignature ? (
         <View>
-          <View style={[styles.signaturePreview, error && styles.signatureError]}>
+          <View
+            style={[styles.signaturePreview, error && styles.signatureError]}
+          >
             {value ? (
               <Text style={styles.signatureText}>✓ Signature captured</Text>
             ) : (
@@ -294,25 +300,25 @@ export const SignatureField: React.FC<SignatureFieldProps> = ({ field }) => {
             onEmpty={handleEmpty}
             onClear={handleClear}
             autoClear={false}
-            descriptionText="Sign here"
-            clearText="Clear"
-            confirmText="Save"
+            descriptionText='Sign here'
+            clearText='Clear'
+            confirmText='Save'
             webStyle={webStyle}
             // Web-specific props
-            backgroundColor="white"
-            penColor="black"
+            backgroundColor='white'
+            penColor='black'
             minWidth={2}
             maxWidth={4}
             // Better handling for web
             androidHardwareAccelerationDisabled={false}
           />
           <View style={styles.signatureActions}>
-            <Button title="Clear" onPress={handleClear} />
-            <Button title="Cancel" onPress={handleCancel} />
+            <Button title='Clear' onPress={handleClear} />
+            <Button title='Cancel' onPress={handleCancel} />
           </View>
         </View>
       )}
-      
+
       {error && <Text style={styles.errorText}>{error}</Text>}
     </View>
   );

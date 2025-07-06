@@ -10,7 +10,9 @@ const simulateDelay = (ms: number): Promise<void> => {
 };
 
 // Mock submit form API
-export const submitFormAPI = async (formData: FormState): Promise<SubmitFormResponse> => {
+export const submitFormAPI = async (
+  formData: FormState,
+): Promise<SubmitFormResponse> => {
   try {
     // Simulate network delay (1-2 seconds)
     const delay = Math.random() * 1000 + 1000; // 1-2 seconds
@@ -50,17 +52,19 @@ export const submitFormAPI = async (formData: FormState): Promise<SubmitFormResp
 };
 
 // Mock sync offline forms API
-export const syncOfflineFormsAPI = async (forms: FormState[]): Promise<SubmitFormResponse[]> => {
+export const syncOfflineFormsAPI = async (
+  forms: FormState[],
+): Promise<SubmitFormResponse[]> => {
   try {
     // Simulate network delay
     await simulateDelay(1500);
 
     // Mock sync all forms
     const results = await Promise.all(
-      forms.map(async (formData) => {
+      forms.map(async formData => {
         // Random success/failure for demo
         const success = Math.random() > 0.1; // 90% success rate
-        
+
         if (success) {
           return {
             success: true,
@@ -73,7 +77,7 @@ export const syncOfflineFormsAPI = async (forms: FormState[]): Promise<SubmitFor
             message: 'Sync failed. Will retry later.',
           };
         }
-      })
+      }),
     );
 
     return results;
@@ -98,7 +102,9 @@ export const isNetworkAvailable = async (): Promise<boolean> => {
 };
 
 // Mock sync individual form API
-export const syncFormAPI = async (form: OfflineFormData): Promise<{
+export const syncFormAPI = async (
+  form: OfflineFormData,
+): Promise<{
   success: boolean;
   message: string;
   serverData?: OfflineFormData;
@@ -110,8 +116,9 @@ export const syncFormAPI = async (form: OfflineFormData): Promise<{
 
     // Mock server response - simulate different scenarios
     const scenarios = ['upload', 'download', 'conflict'];
-    const randomScenario = scenarios[Math.floor(Math.random() * scenarios.length)];
-    
+    const randomScenario =
+      scenarios[Math.floor(Math.random() * scenarios.length)];
+
     switch (randomScenario) {
       case 'upload':
         // Local is newer, upload to server
@@ -120,7 +127,7 @@ export const syncFormAPI = async (form: OfflineFormData): Promise<{
           message: 'Form uploaded successfully',
           action: 'upload',
         };
-      
+
       case 'download':
         // Server is newer, download from server
         const serverData: OfflineFormData = {
@@ -134,7 +141,7 @@ export const syncFormAPI = async (form: OfflineFormData): Promise<{
           action: 'download',
           serverData,
         };
-      
+
       case 'conflict':
         // Conflict scenario
         return {
@@ -142,7 +149,7 @@ export const syncFormAPI = async (form: OfflineFormData): Promise<{
           message: 'Sync conflict detected',
           action: 'conflict',
         };
-      
+
       default:
         return {
           success: true,

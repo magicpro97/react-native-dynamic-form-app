@@ -3,23 +3,23 @@ export const colors = {
   primary: '#2E7D32',
   primaryLight: '#4CAF50',
   primaryDark: '#1B5E20',
-  
+
   // Secondary colors
   secondary: '#1976D2',
   secondaryLight: '#2196F3',
   secondaryDark: '#0D47A1',
-  
+
   // Risk level colors
   riskLow: '#4CAF50',
   riskMedium: '#FF9800',
   riskHigh: '#F44336',
-  
+
   // Status colors
   success: '#4CAF50',
   warning: '#FF9800',
   error: '#F44336',
   info: '#2196F3',
-  
+
   // Neutral colors
   white: '#FFFFFF',
   black: '#000000',
@@ -33,25 +33,25 @@ export const colors = {
   gray700: '#616161',
   gray800: '#424242',
   gray900: '#212121',
-  
+
   // Background colors
   background: '#FAFAFA',
   surface: '#FFFFFF',
   surfaceVariant: '#F5F5F5',
-  
+
   // Text colors
   textPrimary: '#212121',
   textSecondary: '#757575',
   textDisabled: '#BDBDBD',
   textOnPrimary: '#FFFFFF',
   textOnSecondary: '#FFFFFF',
-  
+
   // Border colors
   border: '#E0E0E0',
   borderFocus: '#2196F3',
   borderError: '#F44336',
   borderSuccess: '#4CAF50',
-  
+
   // Shadow colors
   shadow: 'rgba(0, 0, 0, 0.1)',
   shadowDark: 'rgba(0, 0, 0, 0.3)',

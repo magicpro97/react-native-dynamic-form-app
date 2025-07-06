@@ -1,6 +1,20 @@
 import React from 'react';
-import { View, Text, StyleSheet, ViewStyle, TextStyle, TouchableOpacity } from 'react-native';
-import { colors, spacing, borderRadius as themeRadius, fontSize, fontWeight, shadows } from '../../theme';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ViewStyle,
+  TextStyle,
+  TouchableOpacity,
+} from 'react-native';
+import {
+  colors,
+  spacing,
+  borderRadius as themeRadius,
+  fontSize,
+  fontWeight,
+  shadows,
+} from '../../theme';
 
 interface CardProps {
   children: React.ReactNode;
@@ -72,14 +86,12 @@ export const Button: React.FC<ButtonProps> = ({
   ];
 
   return (
-    <TouchableOpacity 
-      style={buttonStyle} 
+    <TouchableOpacity
+      style={buttonStyle}
       onPress={!disabled ? onPress : undefined}
       disabled={disabled}
     >
-      <Text style={textStyle}>
-        {loading ? 'Loading...' : title}
-      </Text>
+      <Text style={textStyle}>{loading ? 'Loading...' : title}</Text>
     </TouchableOpacity>
   );
 };
@@ -98,7 +110,13 @@ export const Typography: React.FC<TextProps> = ({
   style,
 }) => {
   return (
-    <Text style={[styles[`text_${variant}` as keyof typeof styles], { color }, style]}>
+    <Text
+      style={[
+        styles[`text_${variant}` as keyof typeof styles],
+        { color },
+        style,
+      ]}
+    >
       {children}
     </Text>
   );

@@ -11,7 +11,11 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "keywords": [],
   "author": "",
@@ -37,9 +41,18 @@
     "typescript": "~5.8.3"
   },
   "devDependencies": {
+    "@eslint/js": "^9.30.1",
     "@expo/metro-config": "^0.20.17",
     "@types/react": "~19.0.10",
-    "metro": "^0.82.4"
+    "@typescript-eslint/eslint-plugin": "^8.35.1",
+    "@typescript-eslint/parser": "^8.35.1",
+    "eslint": "^9.30.1",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-native": "^5.0.0",
+    "metro": "^0.82.4",
+    "prettier": "^3.6.2",
+    "typescript-eslint": "^8.35.1"
   },
   "expo": {
     "doctor": {
