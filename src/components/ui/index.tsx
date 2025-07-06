@@ -1,13 +1,13 @@
 import React from 'react';
-import { View, Text, StyleSheet, ViewStyle, TouchableOpacity } from 'react-native';
-import { colors, spacing, borderRadius, fontSize, fontWeight, shadows } from '../../theme';
+import { View, Text, StyleSheet, ViewStyle, TextStyle, TouchableOpacity } from 'react-native';
+import { colors, spacing, borderRadius as themeRadius, fontSize, fontWeight, shadows } from '../../theme';
 
 interface CardProps {
   children: React.ReactNode;
   style?: ViewStyle;
   padding?: keyof typeof spacing;
   shadow?: keyof typeof shadows;
-  borderRadius?: keyof typeof borderRadius;
+  borderRadius?: keyof typeof themeRadius;
 }
 
 export const Card: React.FC<CardProps> = ({
@@ -23,7 +23,7 @@ export const Card: React.FC<CardProps> = ({
         styles.card,
         {
           padding: spacing[padding],
-          borderRadius: borderRadius[radius],
+          borderRadius: themeRadius[radius],
           ...shadows[shadow],
         },
         style,
@@ -57,27 +57,17 @@ export const Button: React.FC<ButtonProps> = ({
 }) => {
   const buttonStyle = [
     styles.button,
-    variant === 'primary' && styles.button_primary,
-    variant === 'secondary' && styles.button_secondary,
-    variant === 'outline' && styles.button_outline,
-    variant === 'ghost' && styles.button_ghost,
-    size === 'small' && styles.button_small,
-    size === 'medium' && styles.button_medium,
-    size === 'large' && styles.button_large,
+    styles[`button_${variant}` as keyof typeof styles] as ViewStyle,
+    styles[`button_${size}` as keyof typeof styles] as ViewStyle,
     fullWidth && styles.buttonFullWidth,
     disabled && styles.buttonDisabled,
     style,
-  ];
+  ].filter(Boolean);
 
   const textStyle = [
     styles.buttonText,
-    variant === 'primary' && styles.buttonText_primary,
-    variant === 'secondary' && styles.buttonText_secondary,
-    variant === 'outline' && styles.buttonText_outline,
-    variant === 'ghost' && styles.buttonText_ghost,
-    size === 'small' && styles.buttonText_small,
-    size === 'medium' && styles.buttonText_medium,
-    size === 'large' && styles.buttonText_large,
+    styles[`buttonText_${variant}` as keyof typeof styles],
+    styles[`buttonText_${size}` as keyof typeof styles],
     disabled && styles.buttonTextDisabled,
   ];
 
@@ -107,19 +97,8 @@ export const Typography: React.FC<TextProps> = ({
   color = colors.textPrimary,
   style,
 }) => {
-  const textStyle = [
-    variant === 'h1' && styles.text_h1,
-    variant === 'h2' && styles.text_h2,
-    variant === 'h3' && styles.text_h3,
-    variant === 'body1' && styles.text_body1,
-    variant === 'body2' && styles.text_body2,
-    variant === 'caption' && styles.text_caption,
-    { color },
-    style,
-  ];
-
   return (
-    <Text style={textStyle}>
+    <Text style={[styles[`text_${variant}` as keyof typeof styles], { color }, style]}>
       {children}
     </Text>
   );
@@ -135,7 +114,7 @@ const styles = StyleSheet.create({
 
   // Button styles
   button: {
-    borderRadius: borderRadius.md,
+    borderRadius: themeRadius.md,
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
