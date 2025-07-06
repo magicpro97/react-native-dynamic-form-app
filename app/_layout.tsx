@@ -29,6 +29,14 @@ export default function RootLayout() {
               headerBackTitle: 'Back'
             }} 
           />
+          <Stack.Screen 
+            name="validation-demo" 
+            options={{ 
+              title: 'Validation Demo',
+              headerShown: true,
+              headerBackTitle: 'Back'
+            }} 
+          />
         </Stack>
       </SyncProvider>
     </ToastProvider>

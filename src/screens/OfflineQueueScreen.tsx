@@ -296,7 +296,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingTop: 50,
+    paddingTop: 20,
     paddingBottom: 20,
     backgroundColor: 'white',
     borderBottomWidth: 1,
@@ -345,6 +345,7 @@ const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
     paddingHorizontal: 15,
+    paddingBottom: 20,
   },
   emptyState: {
     flex: 1,
@@ -372,7 +373,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: 12,
     padding: 15,
-    marginBottom: 10,
+    marginBottom: 15,
+    marginTop: 5,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,

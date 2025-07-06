@@ -41,6 +41,10 @@ export default function HomeScreen() {
     router.push('/responsive-form');
   };
 
+  const navigateToValidationDemo = () => {
+    router.push('/validation-demo');
+  };
+
   const navigateToOfflineQueue = () => {
     router.push('/offline-queue');
   };
@@ -71,6 +75,10 @@ export default function HomeScreen() {
         <View style={styles.spacing} />
         
         <Button title="📱 Responsive Form (iPad Optimized)" onPress={navigateToResponsiveForm} />
+        
+        <View style={styles.spacing} />
+        
+        <Button title="🔍 Validation Demo" onPress={navigateToValidationDemo} />
         
         <View style={styles.spacing} />
         

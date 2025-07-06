@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, Alert, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Alert } from 'react-native';
 import { FormProvider } from '../context/FormContext';
 import { DynamicField } from '../components/form/DynamicField';
 import { Button } from '../components/ui';
@@ -30,11 +30,11 @@ const FormWithValidation: React.FC = () => {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+    <View style={styles.container}>
+      <ScrollView 
+        contentContainerStyle={styles.scrollContainer}
+        showsVerticalScrollIndicator={false}
+      >
         <Card style={styles.formCard}>
           <Text style={styles.title}>Customer Registration</Text>
           <Text style={styles.subtitle}>
@@ -53,7 +53,7 @@ const FormWithValidation: React.FC = () => {
           />
         </Card>
       </ScrollView>
-    </KeyboardAvoidingView>
+    </View>
   );
 };
 
@@ -72,10 +72,15 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     padding: 16,
+    paddingBottom: 40,
+    minHeight: '100%',
   },
   formCard: {
     padding: 24,
     marginBottom: 20,
+    maxWidth: 800,
+    alignSelf: 'center',
+    width: '100%',
   },
   title: {
     fontSize: 24,
@@ -93,5 +98,6 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     marginTop: 24,
+    marginBottom: 16,
   },
 });
