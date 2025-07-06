@@ -36,6 +36,10 @@ export default function HomeScreen() {
     router.push('/form');
   };
 
+  const navigateToResponsiveForm = () => {
+    router.push('/responsive-form');
+  };
+
   const navigateToOfflineQueue = () => {
     router.push('/offline-queue');
   };
@@ -59,6 +63,10 @@ export default function HomeScreen() {
       
       <View style={styles.buttonContainer}>
         <Button title="Open Dynamic Form" onPress={navigateToForm} />
+        
+        <View style={styles.spacing} />
+        
+        <Button title="📱 Responsive Form (iPad Optimized)" onPress={navigateToResponsiveForm} />
         
         <View style={styles.spacing} />
         
