@@ -41,3 +41,18 @@ export interface FormValidation {
   isValid: boolean;
   errors: FormErrors;
 }
+
+// Offline storage types
+export interface OfflineFormData {
+  id: string;
+  formData: FormState;
+  timestamp: number;
+  status: 'pending' | 'synced' | 'failed';
+  formTitle: string;
+}
+
+export interface SubmitFormResponse {
+  success: boolean;
+  message: string;
+  data?: any;
+}

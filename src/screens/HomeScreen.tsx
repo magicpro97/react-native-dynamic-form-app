@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, Button } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, Button, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
+import { getPendingFormsCount } from '../utils/storage';
 // Import form.json directly
 import formData from '../assets/form.json';
 
@@ -8,6 +9,7 @@ export default function HomeScreen() {
   const [formTitle, setFormTitle] = useState('');
   const [fieldCount, setFieldCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [pendingFormsCount, setPendingFormsCount] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
@@ -16,6 +18,10 @@ export default function HomeScreen() {
         // Use imported JSON data directly
         setFormTitle(formData.title);
         setFieldCount(formData.fields.length);
+        
+        // Load pending forms count
+        const count = getPendingFormsCount();
+        setPendingFormsCount(count);
       } catch (e) {
         setFormTitle('Error loading form');
         setFieldCount(0);
@@ -30,6 +36,10 @@ export default function HomeScreen() {
     router.push('/form');
   };
 
+  const navigateToOfflineQueue = () => {
+    router.push('/offline-queue');
+  };
+
   if (loading) {
     return <ActivityIndicator style={{ flex: 1 }} />;
   }
@@ -38,8 +48,25 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <Text style={styles.title}>{formTitle}</Text>
       <Text style={styles.subtitle}>Number of fields: {fieldCount}</Text>
+      
+      {pendingFormsCount > 0 && (
+        <View style={styles.offlineNotice}>
+          <Text style={styles.offlineNoticeText}>
+            📱 {pendingFormsCount} form{pendingFormsCount > 1 ? 's' : ''} waiting to sync
+          </Text>
+        </View>
+      )}
+      
       <View style={styles.buttonContainer}>
         <Button title="Open Dynamic Form" onPress={navigateToForm} />
+        
+        <View style={styles.spacing} />
+        
+        <TouchableOpacity style={styles.offlineButton} onPress={navigateToOfflineQueue}>
+          <Text style={styles.offlineButtonText}>
+            📋 Offline Queue {pendingFormsCount > 0 ? `(${pendingFormsCount})` : ''}
+          </Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -61,8 +88,38 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#555',
   },
+  offlineNotice: {
+    backgroundColor: '#FFF3E0',
+    borderRadius: 8,
+    padding: 12,
+    marginTop: 16,
+    borderLeftWidth: 4,
+    borderLeftColor: '#FF9800',
+  },
+  offlineNoticeText: {
+    fontSize: 14,
+    color: '#F57C00',
+    fontWeight: '600',
+  },
   buttonContainer: {
     marginTop: 24,
     paddingHorizontal: 32,
+    width: '100%',
+  },
+  spacing: {
+    height: 16,
+  },
+  offlineButton: {
+    backgroundColor: '#E3F2FD',
+    borderRadius: 8,
+    padding: 16,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#2196F3',
+  },
+  offlineButtonText: {
+    fontSize: 16,
+    color: '#1976D2',
+    fontWeight: '600',
   },
 });

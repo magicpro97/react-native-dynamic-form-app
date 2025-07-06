@@ -8,16 +8,20 @@ import {
   Alert, 
   SafeAreaView 
 } from 'react-native';
+import { useRouter } from 'expo-router';
 import { FormProvider, useForm } from '../context/FormContext';
 import { DynamicField } from '../components/form/DynamicField';
 import { FormConfig } from '../types/form';
 import { validateForm, formatFormData } from '../utils/formValidation';
+import { saveOfflineForm } from '../utils/storage';
+import { submitFormAPI } from '../services/api';
 import formData from '../assets/form.json';
 
 const FormContent: React.FC = () => {
   const { formState, setError, resetForm } = useForm();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const formConfig: FormConfig = formData as FormConfig;
+  const router = useRouter();
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
@@ -38,24 +42,41 @@ const FormContent: React.FC = () => {
       // Format form data
       const submissionData = formatFormData(formConfig.fields, formState);
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Save to offline storage first
+      const formId = saveOfflineForm(submissionData, formConfig.title);
+      const submissionTime = Date.now();
       
-      console.log('Form submitted:', submissionData);
-      
-      Alert.alert(
-        'Success',
-        'Form submitted successfully!',
-        [
-          {
-            text: 'OK',
-            onPress: () => resetForm(),
-          },
-        ]
-      );
+      try {
+        // Try to submit online
+        const response = await submitFormAPI(submissionData);
+        
+        if (response.success) {
+          console.log('Form submitted successfully:', response.data);
+          
+          // Navigate to success screen
+          router.push({
+            pathname: '/success',
+            params: {
+              formTitle: formConfig.title,
+              submissionTime: submissionTime.toString(),
+            },
+          });
+          
+          // Reset form
+          resetForm();
+        } else {
+          Alert.alert('Submission Failed', response.message + ' Form has been saved locally.');
+        }
+      } catch (error) {
+        console.error('Online submission failed:', error);
+        Alert.alert(
+          'Saved Offline',
+          'Unable to submit online right now. Your form has been saved locally and will be synced when connection is available.'
+        );
+      }
       
     } catch (error) {
-      Alert.alert('Error', 'Failed to submit form. Please try again.');
+      Alert.alert('Error', 'Failed to save form. Please try again.');
       console.error('Form submission error:', error);
     } finally {
       setIsSubmitting(false);

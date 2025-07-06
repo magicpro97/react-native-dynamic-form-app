@@ -7,7 +7,18 @@ export const validateForm = (formConfig: FormField[], formState: FormState): For
     const value = formState[field.name];
     
     if (field.required) {
-      if (!value || (Array.isArray(value) && value.length === 0)) {
+      // Handle different field types for required validation
+      let isEmpty = false;
+      
+      if (Array.isArray(value)) {
+        isEmpty = value.length === 0;
+      } else if (typeof value === 'string') {
+        isEmpty = !value.trim();
+      } else {
+        isEmpty = !value;
+      }
+      
+      if (isEmpty) {
         errors[field.name] = `${field.label} is required`;
       }
     }
@@ -24,6 +35,20 @@ export const validateForm = (formConfig: FormField[], formState: FormState): For
     if (field.type === 'number' && value) {
       if (isNaN(Number(value))) {
         errors[field.name] = 'Please enter a valid number';
+      }
+    }
+    
+    // Signature validation - check if signature exists
+    if (field.type === 'signature' && field.required && value) {
+      if (typeof value === 'string' && value.length < 100) {
+        errors[field.name] = 'Please provide a signature';
+      }
+    }
+    
+    // Photo validation - check if photo exists
+    if (field.type === 'photo' && field.required && value) {
+      if (typeof value === 'string' && !value.startsWith('data:') && !value.startsWith('file://')) {
+        errors[field.name] = 'Please take or select a photo';
       }
     }
   });
@@ -56,8 +81,25 @@ export const formatFormData = (formConfig: FormField[], formState: FormState): a
   
   formConfig.forEach((field) => {
     const value = getFieldValue(field, formState);
-    formattedData[field.name] = value;
+    
+    // Add metadata for special fields
+    if (field.type === 'signature' || field.type === 'photo') {
+      formattedData[field.name] = {
+        type: field.type,
+        value: value,
+        timestamp: Date.now(),
+      };
+    } else {
+      formattedData[field.name] = value;
+    }
   });
+  
+  // Add form metadata
+  formattedData._metadata = {
+    submittedAt: new Date().toISOString(),
+    formVersion: '1.0',
+    platform: 'web', // or 'mobile'
+  };
   
   return formattedData;
 };
