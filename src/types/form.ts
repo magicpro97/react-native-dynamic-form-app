@@ -47,8 +47,10 @@ export interface OfflineFormData {
   id: string;
   formData: FormState;
   timestamp: number;
+  updatedAt: number;
   status: 'pending' | 'synced' | 'failed';
   formTitle: string;
+  syncAttempts?: number;
 }
 
 export interface SubmitFormResponse {

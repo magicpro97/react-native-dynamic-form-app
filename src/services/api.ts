@@ -1,4 +1,5 @@
-import { FormState, SubmitFormResponse } from '../types/form';
+import { FormState, SubmitFormResponse, OfflineFormData } from '../types/form';
+import NetInfo from '@react-native-community/netinfo';
 
 // Mock API base URL
 const API_BASE_URL = 'https://jsonplaceholder.typicode.com';
@@ -85,15 +86,76 @@ export const syncOfflineFormsAPI = async (forms: FormState[]): Promise<SubmitFor
   }
 };
 
-// Check network connectivity (simplified)
-export const isNetworkAvailable = (): Promise<boolean> => {
-  return new Promise((resolve) => {
-    // Simple network check - try to fetch a small resource
-    fetch('https://jsonplaceholder.typicode.com/posts/1', {
-      method: 'HEAD',
-      cache: 'no-cache',
-    })
-    .then(() => resolve(true))
-    .catch(() => resolve(false));
-  });
+// Check network connectivity using NetInfo
+export const isNetworkAvailable = async (): Promise<boolean> => {
+  try {
+    const netInfo = await NetInfo.fetch();
+    return netInfo.isConnected === true && netInfo.isInternetReachable === true;
+  } catch (error) {
+    console.error('Error checking network:', error);
+    return false;
+  }
+};
+
+// Mock sync individual form API
+export const syncFormAPI = async (form: OfflineFormData): Promise<{
+  success: boolean;
+  message: string;
+  serverData?: OfflineFormData;
+  action: 'upload' | 'download' | 'conflict';
+}> => {
+  try {
+    // Simulate network delay
+    await simulateDelay(500);
+
+    // Mock server response - simulate different scenarios
+    const scenarios = ['upload', 'download', 'conflict'];
+    const randomScenario = scenarios[Math.floor(Math.random() * scenarios.length)];
+    
+    switch (randomScenario) {
+      case 'upload':
+        // Local is newer, upload to server
+        return {
+          success: true,
+          message: 'Form uploaded successfully',
+          action: 'upload',
+        };
+      
+      case 'download':
+        // Server is newer, download from server
+        const serverData: OfflineFormData = {
+          ...form,
+          formData: { ...form.formData, serverModified: true },
+          updatedAt: Date.now() + 1000, // Make server newer
+        };
+        return {
+          success: true,
+          message: 'Server version is newer',
+          action: 'download',
+          serverData,
+        };
+      
+      case 'conflict':
+        // Conflict scenario
+        return {
+          success: false,
+          message: 'Sync conflict detected',
+          action: 'conflict',
+        };
+      
+      default:
+        return {
+          success: true,
+          message: 'Form synced successfully',
+          action: 'upload',
+        };
+    }
+  } catch (error) {
+    console.error('Error syncing form:', error);
+    return {
+      success: false,
+      message: 'Network error during sync',
+      action: 'upload',
+    };
+  }
 };

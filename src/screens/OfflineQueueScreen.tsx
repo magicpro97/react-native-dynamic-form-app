@@ -17,12 +17,14 @@ import {
 } from '../utils/storage';
 import { submitFormAPI, isNetworkAvailable } from '../services/api';
 import { OfflineFormData } from '../types/form';
+import { SyncStatus } from '../components/sync/SyncStatus';
+import { useSyncContext } from '../context/SyncContext';
 
 const OfflineQueueScreen: React.FC = () => {
   const [offlineForms, setOfflineForms] = useState<OfflineFormData[]>([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [isSyncing, setIsSyncing] = useState(false);
   const router = useRouter();
+  const { refreshPendingCount } = useSyncContext();
 
   useEffect(() => {
     loadOfflineForms();
@@ -31,6 +33,7 @@ const OfflineQueueScreen: React.FC = () => {
   const loadOfflineForms = () => {
     const forms = getOfflineForms();
     setOfflineForms(forms);
+    refreshPendingCount();
   };
 
   const handleRefresh = async () => {
@@ -110,13 +113,10 @@ const OfflineQueueScreen: React.FC = () => {
         { 
           text: 'Sync All', 
           onPress: async () => {
-            setIsSyncing(true);
-            
             try {
               const networkAvailable = await isNetworkAvailable();
               if (!networkAvailable) {
                 Alert.alert('No Network', 'Please check your internet connection and try again.');
-                setIsSyncing(false);
                 return;
               }
 
@@ -147,8 +147,6 @@ const OfflineQueueScreen: React.FC = () => {
               loadOfflineForms();
             } catch (error) {
               Alert.alert('Error', 'Failed to sync forms. Please try again.');
-            } finally {
-              setIsSyncing(false);
             }
           }
         }
@@ -208,10 +206,9 @@ const OfflineQueueScreen: React.FC = () => {
         <TouchableOpacity 
           style={[styles.actionButton, styles.syncButton]}
           onPress={handleSyncAll}
-          disabled={isSyncing}
         >
           <Text style={styles.syncButtonText}>
-            {isSyncing ? 'Syncing...' : 'Sync All'}
+            Sync All
           </Text>
         </TouchableOpacity>
         
@@ -222,6 +219,9 @@ const OfflineQueueScreen: React.FC = () => {
           <Text style={styles.clearButtonText}>Clear All</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Add Sync Status Component */}
+      <SyncStatus showSyncButton={false} showStats={true} />
 
       <ScrollView 
         style={styles.scrollView}

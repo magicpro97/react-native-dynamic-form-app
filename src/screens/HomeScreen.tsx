@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, Button, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { getPendingFormsCount } from '../utils/storage';
+import { SyncStatus } from '../components/sync/SyncStatus';
+import { useSyncContext } from '../context/SyncContext';
 // Import form.json directly
 import formData from '../assets/form.json';
 
@@ -9,8 +11,8 @@ export default function HomeScreen() {
   const [formTitle, setFormTitle] = useState('');
   const [fieldCount, setFieldCount] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [pendingFormsCount, setPendingFormsCount] = useState(0);
   const router = useRouter();
+  const { pendingFormsCount, refreshPendingCount } = useSyncContext();
 
   useEffect(() => {
     const loadForm = async () => {
@@ -19,9 +21,8 @@ export default function HomeScreen() {
         setFormTitle(formData.title);
         setFieldCount(formData.fields.length);
         
-        // Load pending forms count
-        const count = getPendingFormsCount();
-        setPendingFormsCount(count);
+        // Refresh pending forms count
+        refreshPendingCount();
       } catch (e) {
         setFormTitle('Error loading form');
         setFieldCount(0);
@@ -30,7 +31,7 @@ export default function HomeScreen() {
       }
     };
     loadForm();
-  }, []);
+  }, [refreshPendingCount]);
 
   const navigateToForm = () => {
     router.push('/form');
@@ -52,6 +53,9 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <Text style={styles.title}>{formTitle}</Text>
       <Text style={styles.subtitle}>Number of fields: {fieldCount}</Text>
+      
+      {/* Sync Status */}
+      <SyncStatus showSyncButton={true} showStats={true} />
       
       {pendingFormsCount > 0 && (
         <View style={styles.offlineNotice}>
