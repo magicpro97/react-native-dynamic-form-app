@@ -9,6 +9,7 @@ import {
   Alert,
   ActivityIndicator,
   TextInput,
+  Modal,
 } from 'react-native';
 import { colors, spacing, fontSize, fontWeight } from '../theme';
 import { useResponsive } from '../hooks/useResponsive';
@@ -20,13 +21,17 @@ import {
 } from '../hooks/useFormConfiguration';
 import { FormConfiguration } from '../services/api';
 import { Button } from '../components/ui';
-import { ResponsiveTextInput } from '../components/form/ResponsiveTextInput';
+import { FormEditor } from '../components/form/FormEditor';
 
 export const FormConfigurationScreen: React.FC = () => {
   const { isTablet, getFontSize, getSpacing } = useResponsive();
   const [selectedFormId, setSelectedFormId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
+  const [editingForm, setEditingForm] = useState<FormConfiguration | null>(
+    null
+  );
+  const [showEditor, setShowEditor] = useState(false);
 
   // Hooks for API operations
   const {
@@ -60,6 +65,34 @@ export const FormConfigurationScreen: React.FC = () => {
 
   const handleSelectForm = (formId: string) => {
     setSelectedFormId(formId);
+  };
+
+  const handleEditForm = (form: FormConfiguration) => {
+    setEditingForm(form);
+    setShowEditor(true);
+  };
+
+  const handleSaveForm = async (formData: Partial<FormConfiguration>) => {
+    if (!editingForm) return;
+
+    const result = await updateForm(editingForm.id, formData);
+    if (result.success) {
+      Alert.alert('Success', 'Form updated successfully');
+      setShowEditor(false);
+      setEditingForm(null);
+      refetchList();
+      // Refresh the selected form details if it's the same form
+      if (selectedFormId === editingForm.id) {
+        // The form details will be refreshed automatically by the hook
+      }
+    } else {
+      Alert.alert('Error', 'Failed to update form');
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setShowEditor(false);
+    setEditingForm(null);
   };
 
   const handleDeleteForm = async (formId: string) => {
@@ -114,10 +147,7 @@ export const FormConfigurationScreen: React.FC = () => {
       <View style={styles.formActions}>
         <Button
           title='Edit'
-          onPress={() => {
-            // TODO: Navigate to edit screen
-            Alert.alert('Edit', `Edit form: ${form.title}`);
-          }}
+          onPress={() => handleEditForm(form)}
           variant='outline'
           size='small'
           style={styles.actionButton}
@@ -301,6 +331,25 @@ export const FormConfigurationScreen: React.FC = () => {
           {renderFormDetails()}
         </View>
       </View>
+
+      {/* Form Editor Modal */}
+      <Modal
+        visible={showEditor}
+        animationType='slide'
+        presentationStyle='pageSheet'
+        onRequestClose={handleCancelEdit}
+      >
+        <View style={styles.modalContainer}>
+          {editingForm && (
+            <FormEditor
+              form={editingForm}
+              onSave={handleSaveForm}
+              onCancel={handleCancelEdit}
+              loading={actionLoading}
+            />
+          )}
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -497,6 +546,10 @@ const getStyles = (
       color: colors.textSecondary,
       textAlign: 'center',
       fontStyle: 'italic',
+    },
+    modalContainer: {
+      flex: 1,
+      backgroundColor: colors.background,
     },
   });
 };

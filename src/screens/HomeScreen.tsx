@@ -115,6 +115,15 @@ export default function HomeScreen() {
         >
           <Text style={styles.configButtonText}>⚙️ Form Configuration API</Text>
         </TouchableOpacity>
+
+        <View style={styles.spacing} />
+
+        <TouchableOpacity
+          style={styles.testButton}
+          onPress={() => router.push('/validation-test' as any)}
+        >
+          <Text style={styles.testButtonText}>🧪 Test Validation Rules</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -181,6 +190,19 @@ const styles = StyleSheet.create({
   configButtonText: {
     fontSize: 16,
     color: '#7B1FA2',
+    fontWeight: '600',
+  },
+  testButton: {
+    backgroundColor: '#E8F5E8',
+    borderRadius: 8,
+    padding: 16,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#4CAF50',
+  },
+  testButtonText: {
+    fontSize: 16,
+    color: '#2E7D32',
     fontWeight: '600',
   },
 });
