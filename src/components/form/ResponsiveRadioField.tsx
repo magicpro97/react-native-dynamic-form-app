@@ -99,9 +99,9 @@ export const ResponsiveRadioField: React.FC<ResponsiveRadioFieldProps> = ({
 
 const getStyles = (
   isTablet: boolean,
-  getFontSize: Function,
-  getSpacing: Function,
-  isLandscape: boolean,
+  getFontSize: (size: 'small' | 'medium' | 'large' | 'xlarge') => number,
+  getSpacing: (size: 'xs' | 'sm' | 'md' | 'lg' | 'xl') => number,
+  _isLandscape: boolean
 ) => {
   return StyleSheet.create({
     container: {

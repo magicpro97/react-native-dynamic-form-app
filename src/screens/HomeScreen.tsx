@@ -56,6 +56,10 @@ export default function HomeScreen() {
     router.push('/offline-queue');
   };
 
+  const navigateToFormConfiguration = () => {
+    router.push('/form-configuration');
+  };
+
   if (loading) {
     return <ActivityIndicator style={{ flex: 1 }} />;
   }
@@ -101,6 +105,15 @@ export default function HomeScreen() {
             📋 Offline Queue{' '}
             {pendingFormsCount > 0 ? `(${pendingFormsCount})` : ''}
           </Text>
+        </TouchableOpacity>
+
+        <View style={styles.spacing} />
+
+        <TouchableOpacity
+          style={styles.configButton}
+          onPress={() => router.push('/form-configuration' as any)}
+        >
+          <Text style={styles.configButtonText}>⚙️ Form Configuration API</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -155,6 +168,19 @@ const styles = StyleSheet.create({
   offlineButtonText: {
     fontSize: 16,
     color: '#1976D2',
+    fontWeight: '600',
+  },
+  configButton: {
+    backgroundColor: '#F3E5F5',
+    borderRadius: 8,
+    padding: 16,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#9C27B0',
+  },
+  configButtonText: {
+    fontSize: 16,
+    color: '#7B1FA2',
     fontWeight: '600',
   },
 });

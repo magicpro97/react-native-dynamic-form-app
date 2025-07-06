@@ -139,8 +139,9 @@ const WebSignatureCanvas: React.FC<{
 let SignatureScreen: any;
 if (Platform.OS !== 'web') {
   try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     SignatureScreen = require('react-native-signature-canvas').default;
-  } catch (e) {
+  } catch (_e) {
     // Fallback if library is not installed
     SignatureScreen = null;
   }

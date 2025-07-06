@@ -45,10 +45,11 @@ const errorReducer = (state: FormErrors, action: any): FormErrors => {
         ...state,
         [action.payload.name]: action.payload.error,
       };
-    case 'CLEAR_ERROR':
+    case 'CLEAR_ERROR': {
       const newState = { ...state };
       delete newState[action.payload.name];
       return newState;
+    }
     case 'RESET_ERRORS':
       return {};
     default:

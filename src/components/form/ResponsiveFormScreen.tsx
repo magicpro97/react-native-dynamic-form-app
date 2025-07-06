@@ -55,7 +55,7 @@ const ResponsiveFormContent: React.FC = () => {
         });
         Alert.alert(
           'Validation Error',
-          'Please correct the errors and try again.',
+          'Please correct the errors and try again.'
         );
         return;
       }
@@ -82,14 +82,14 @@ const ResponsiveFormContent: React.FC = () => {
         } else {
           Alert.alert(
             'Submission Failed',
-            response.message + ' Form has been saved locally.',
+            response.message + ' Form has been saved locally.'
           );
         }
       } catch (error) {
         console.error('Online submission failed:', error);
         Alert.alert(
           'Saved Offline',
-          'Unable to submit online right now. Your form has been saved locally and will be synced when connection is available.',
+          'Unable to submit online right now. Your form has been saved locally and will be synced when connection is available.'
         );
       }
     } catch (error) {
@@ -112,7 +112,7 @@ const ResponsiveFormContent: React.FC = () => {
     isLandscape,
     getPadding,
     getFontSize,
-    getSpacing,
+    getSpacing
   );
   const columns = getColumns();
 
@@ -215,9 +215,9 @@ export default function ResponsiveFormScreen() {
 const getStyles = (
   isTablet: boolean,
   isLandscape: boolean,
-  getPadding: Function,
-  getFontSize: Function,
-  getSpacing: Function,
+  getPadding: () => number,
+  getFontSize: (size: 'small' | 'medium' | 'large' | 'xlarge') => number,
+  getSpacing: (size: 'xs' | 'sm' | 'md' | 'lg' | 'xl') => number
 ) => {
   return StyleSheet.create({
     container: {

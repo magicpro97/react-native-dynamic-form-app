@@ -39,7 +39,7 @@ export const validators = {
   },
 
   phone: (value: string) => {
-    const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+    const phoneRegex = /^[+]?[1-9][\d]{0,15}$/;
     return phoneRegex.test(value.replace(/\s/g, ''));
   },
 
@@ -94,7 +94,7 @@ export const validateField = (
   fieldName: string,
   value: any,
   fieldConfig: FieldConfig,
-  formState: FormState,
+  formState: FormState
 ): string | null => {
   // Skip validation if field is empty and not required
   if (!fieldConfig.validation || fieldConfig.validation.length === 0) {
@@ -182,7 +182,7 @@ export const validateField = (
 // Validate entire form
 export const validateForm = (
   formState: FormState,
-  fieldConfigs: FieldConfig[],
+  fieldConfigs: FieldConfig[]
 ): { [key: string]: string } => {
   const errors: { [key: string]: string } = {};
 
@@ -191,7 +191,7 @@ export const validateForm = (
       config.name,
       formState[config.name],
       config,
-      formState,
+      formState
     );
     if (error) {
       errors[config.name] = error;
@@ -250,7 +250,7 @@ export const businessValidators = {
   // Password confirmation
   validatePasswordConfirmation: (
     confirmPassword: string,
-    formState: FormState,
+    formState: FormState
   ) => {
     if (confirmPassword !== formState.password) {
       return 'Passwords do not match';

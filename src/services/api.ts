@@ -1,8 +1,49 @@
-import { FormState, SubmitFormResponse, OfflineFormData } from '../types/form';
+import {
+  FormState,
+  SubmitFormResponse,
+  OfflineFormData,
+  FormField,
+} from '../types/form';
 import NetInfo from '@react-native-community/netinfo';
 
 // Mock API base URL
 const API_BASE_URL = 'https://jsonplaceholder.typicode.com';
+// Form API endpoints
+const FORM_API_BASE = 'https://api.example.com/forms'; // Replace with your actual API
+
+// Types for form configuration responses
+export interface FormConfiguration {
+  id: string;
+  name: string;
+  title: string;
+  description?: string;
+  version: string;
+  fields: FormField[];
+  settings?: {
+    allowOffline?: boolean;
+    requireAuth?: boolean;
+    maxFileSize?: number;
+  };
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface FormListResponse {
+  success: boolean;
+  message: string;
+  data: {
+    forms: FormConfiguration[];
+    total: number;
+    page: number;
+    limit: number;
+  };
+}
+
+export interface FormDetailResponse {
+  success: boolean;
+  message: string;
+  data: FormConfiguration;
+}
 
 // Simulate network delay
 const simulateDelay = (ms: number): Promise<void> => {
@@ -11,7 +52,7 @@ const simulateDelay = (ms: number): Promise<void> => {
 
 // Mock submit form API
 export const submitFormAPI = async (
-  formData: FormState,
+  formData: FormState
 ): Promise<SubmitFormResponse> => {
   try {
     // Simulate network delay (1-2 seconds)
@@ -53,7 +94,7 @@ export const submitFormAPI = async (
 
 // Mock sync offline forms API
 export const syncOfflineFormsAPI = async (
-  forms: FormState[],
+  forms: FormState[]
 ): Promise<SubmitFormResponse[]> => {
   try {
     // Simulate network delay
@@ -77,7 +118,7 @@ export const syncOfflineFormsAPI = async (
             message: 'Sync failed. Will retry later.',
           };
         }
-      }),
+      })
     );
 
     return results;
@@ -103,7 +144,7 @@ export const isNetworkAvailable = async (): Promise<boolean> => {
 
 // Mock sync individual form API
 export const syncFormAPI = async (
-  form: OfflineFormData,
+  form: OfflineFormData
 ): Promise<{
   success: boolean;
   message: string;
@@ -128,7 +169,7 @@ export const syncFormAPI = async (
           action: 'upload',
         };
 
-      case 'download':
+      case 'download': {
         // Server is newer, download from server
         const serverData: OfflineFormData = {
           ...form,
@@ -141,6 +182,7 @@ export const syncFormAPI = async (
           action: 'download',
           serverData,
         };
+      }
 
       case 'conflict':
         // Conflict scenario
@@ -165,4 +207,540 @@ export const syncFormAPI = async (
       action: 'upload',
     };
   }
+};
+
+// Mock API to fetch form configurations
+export const fetchFormConfigurations = async (
+  page = 1,
+  limit = 10
+): Promise<FormListResponse> => {
+  try {
+    // Simulate network delay
+    await simulateDelay(1000);
+
+    // Mock API response
+    const response: FormListResponse = {
+      success: true,
+      message: 'Form configurations fetched successfully',
+      data: {
+        forms: [
+          {
+            id: '1',
+            name: 'contact-us',
+            title: 'Contact Us Form',
+            description: 'Form for users to contact us',
+            version: '1.0',
+            fields: [
+              {
+                name: 'fullName',
+                label: 'Full Name',
+                type: 'text',
+                required: true,
+                placeholder: 'Enter your full name',
+              },
+              {
+                name: 'email',
+                label: 'Email Address',
+                type: 'email',
+                required: true,
+                placeholder: 'Enter your email',
+              },
+              {
+                name: 'message',
+                label: 'Message',
+                type: 'text',
+                required: true,
+                placeholder: 'Enter your message',
+              },
+            ],
+            settings: {
+              allowOffline: true,
+              requireAuth: false,
+              maxFileSize: 5 * 1024 * 1024, // 5 MB
+            },
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          },
+          {
+            id: '2',
+            name: 'user-registration',
+            title: 'User Registration Form',
+            description: 'New user registration form',
+            version: '1.1',
+            fields: [
+              {
+                name: 'username',
+                label: 'Username',
+                type: 'text',
+                required: true,
+                placeholder: 'Choose a username',
+              },
+              {
+                name: 'email',
+                label: 'Email',
+                type: 'email',
+                required: true,
+                placeholder: 'Enter your email',
+              },
+              {
+                name: 'password',
+                label: 'Password',
+                type: 'password',
+                required: true,
+                placeholder: 'Enter a secure password',
+              },
+              {
+                name: 'gender',
+                label: 'Gender',
+                type: 'radio',
+                required: false,
+                options: [
+                  { label: 'Male', value: 'male' },
+                  { label: 'Female', value: 'female' },
+                  { label: 'Other', value: 'other' },
+                ],
+              },
+            ],
+            settings: {
+              allowOffline: false,
+              requireAuth: false,
+              maxFileSize: 2 * 1024 * 1024, // 2 MB
+            },
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString(),
+          },
+        ],
+        total: 2,
+        page,
+        limit,
+      },
+    };
+
+    return response;
+  } catch (error) {
+    console.error('Error fetching form configurations:', error);
+    return {
+      success: false,
+      message: 'Failed to fetch form configurations',
+      data: {
+        forms: [],
+        total: 0,
+        page,
+        limit,
+      },
+    };
+  }
+};
+
+// Mock API to fetch a single form configuration by ID
+export const fetchFormConfigurationById = async (
+  id: string
+): Promise<FormDetailResponse> => {
+  try {
+    // Simulate network delay
+    await simulateDelay(1000);
+
+    // Mock form configurations database
+    const mockForms: { [key: string]: FormConfiguration } = {
+      '1': {
+        id: '1',
+        name: 'contact-us',
+        title: 'Contact Us Form',
+        description: 'Form for users to contact us',
+        version: '1.0',
+        fields: [
+          {
+            name: 'fullName',
+            label: 'Full Name',
+            type: 'text',
+            required: true,
+            placeholder: 'Enter your full name',
+          },
+          {
+            name: 'email',
+            label: 'Email Address',
+            type: 'email',
+            required: true,
+            placeholder: 'Enter your email',
+          },
+          {
+            name: 'message',
+            label: 'Message',
+            type: 'text',
+            required: true,
+            placeholder: 'Enter your message',
+          },
+        ],
+        settings: {
+          allowOffline: true,
+          requireAuth: false,
+          maxFileSize: 5 * 1024 * 1024, // 5 MB
+        },
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+      '2': {
+        id: '2',
+        name: 'user-registration',
+        title: 'User Registration Form',
+        description: 'New user registration form',
+        version: '1.1',
+        fields: [
+          {
+            name: 'username',
+            label: 'Username',
+            type: 'text',
+            required: true,
+            placeholder: 'Choose a username',
+          },
+          {
+            name: 'email',
+            label: 'Email',
+            type: 'email',
+            required: true,
+            placeholder: 'Enter your email',
+          },
+          {
+            name: 'password',
+            label: 'Password',
+            type: 'password',
+            required: true,
+            placeholder: 'Enter a secure password',
+          },
+          {
+            name: 'gender',
+            label: 'Gender',
+            type: 'radio',
+            required: false,
+            options: [
+              { label: 'Male', value: 'male' },
+              { label: 'Female', value: 'female' },
+              { label: 'Other', value: 'other' },
+            ],
+          },
+        ],
+        settings: {
+          allowOffline: false,
+          requireAuth: false,
+          maxFileSize: 2 * 1024 * 1024, // 2 MB
+        },
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+    };
+
+    const formConfig = mockForms[id];
+
+    if (formConfig) {
+      return {
+        success: true,
+        message: 'Form configuration fetched successfully',
+        data: formConfig,
+      };
+    } else {
+      return {
+        success: false,
+        message: 'Form configuration not found',
+        data: {
+          id: '',
+          name: '',
+          title: '',
+          version: '',
+          fields: [],
+          createdAt: '',
+          updatedAt: '',
+        },
+      };
+    }
+  } catch (error) {
+    console.error('Error fetching form configuration:', error);
+    return {
+      success: false,
+      message: 'Failed to fetch form configuration',
+      data: {
+        id: '',
+        name: '',
+        title: '',
+        version: '',
+        fields: [],
+        createdAt: '',
+        updatedAt: '',
+      },
+    };
+  }
+};
+
+// API to create a new form configuration
+export const createFormConfiguration = async (
+  formData: Omit<FormConfiguration, 'id' | 'createdAt' | 'updatedAt'>
+): Promise<FormDetailResponse> => {
+  try {
+    // Simulate network delay
+    await simulateDelay(1500);
+
+    // Mock API call to create form
+    const response = await fetch(`${FORM_API_BASE}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer YOUR_AUTH_TOKEN', // Replace with actual token
+      },
+      body: JSON.stringify(formData),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    return {
+      success: true,
+      message: 'Form configuration created successfully',
+      data: {
+        ...formData,
+        id: data.id || Math.random().toString(36).substr(2, 9),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+    };
+  } catch (error) {
+    console.error('Error creating form configuration:', error);
+    return {
+      success: false,
+      message: 'Failed to create form configuration',
+      data: {
+        id: '',
+        name: '',
+        title: '',
+        version: '',
+        fields: [],
+        createdAt: '',
+        updatedAt: '',
+      },
+    };
+  }
+};
+
+// API to update an existing form configuration
+export const updateFormConfiguration = async (
+  id: string,
+  formData: Partial<FormConfiguration>
+): Promise<FormDetailResponse> => {
+  try {
+    // Simulate network delay
+    await simulateDelay(1200);
+
+    // Mock API call to update form
+    const response = await fetch(`${FORM_API_BASE}/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer YOUR_AUTH_TOKEN', // Replace with actual token
+      },
+      body: JSON.stringify(formData),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    return {
+      success: true,
+      message: 'Form configuration updated successfully',
+      data: {
+        ...data,
+        updatedAt: new Date().toISOString(),
+      },
+    };
+  } catch (error) {
+    console.error('Error updating form configuration:', error);
+    return {
+      success: false,
+      message: 'Failed to update form configuration',
+      data: {
+        id: '',
+        name: '',
+        title: '',
+        version: '',
+        fields: [],
+        createdAt: '',
+        updatedAt: '',
+      },
+    };
+  }
+};
+
+// API to delete a form configuration
+export const deleteFormConfiguration = async (
+  id: string
+): Promise<{ success: boolean; message: string }> => {
+  try {
+    // Simulate network delay
+    await simulateDelay(800);
+
+    // Mock API call to delete form
+    const response = await fetch(`${FORM_API_BASE}/${id}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: 'Bearer YOUR_AUTH_TOKEN', // Replace with actual token
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return {
+      success: true,
+      message: 'Form configuration deleted successfully',
+    };
+  } catch (error) {
+    console.error('Error deleting form configuration:', error);
+    return {
+      success: false,
+      message: 'Failed to delete form configuration',
+    };
+  }
+};
+
+// API to search form configurations
+export const searchFormConfigurations = async (
+  query: string,
+  page = 1,
+  limit = 10
+): Promise<FormListResponse> => {
+  try {
+    // Simulate network delay
+    await simulateDelay(800);
+
+    // Mock API call to search forms
+    const response = await fetch(
+      `${FORM_API_BASE}/search?q=${encodeURIComponent(query)}&page=${page}&limit=${limit}`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: 'Bearer YOUR_AUTH_TOKEN', // Replace with actual token
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    return {
+      success: true,
+      message: 'Form configurations searched successfully',
+      data,
+    };
+  } catch (error) {
+    console.error('Error searching form configurations:', error);
+    return {
+      success: false,
+      message: 'Failed to search form configurations',
+      data: {
+        forms: [],
+        total: 0,
+        page,
+        limit,
+      },
+    };
+  }
+};
+
+// API to get form configuration by name/slug
+export const fetchFormConfigurationByName = async (
+  name: string
+): Promise<FormDetailResponse> => {
+  try {
+    // Simulate network delay
+    await simulateDelay(1000);
+
+    // Mock API call to get form by name
+    const response = await fetch(`${FORM_API_BASE}/by-name/${name}`, {
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer YOUR_AUTH_TOKEN', // Replace with actual token
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    return {
+      success: true,
+      message: 'Form configuration fetched successfully',
+      data,
+    };
+  } catch (error) {
+    console.error('Error fetching form configuration by name:', error);
+    return {
+      success: false,
+      message: 'Failed to fetch form configuration',
+      data: {
+        id: '',
+        name: '',
+        title: '',
+        version: '',
+        fields: [],
+        createdAt: '',
+        updatedAt: '',
+      },
+    };
+  }
+};
+
+// Helper function to validate form configuration
+export const validateFormConfiguration = (
+  config: FormConfiguration
+): { isValid: boolean; errors: string[] } => {
+  const errors: string[] = [];
+
+  if (!config.name || config.name.trim() === '') {
+    errors.push('Form name is required');
+  }
+
+  if (!config.title || config.title.trim() === '') {
+    errors.push('Form title is required');
+  }
+
+  if (!config.fields || config.fields.length === 0) {
+    errors.push('At least one field is required');
+  }
+
+  config.fields.forEach((field, index) => {
+    if (!field.name || field.name.trim() === '') {
+      errors.push(`Field ${index + 1}: Name is required`);
+    }
+
+    if (!field.label || field.label.trim() === '') {
+      errors.push(`Field ${index + 1}: Label is required`);
+    }
+
+    if (!field.type) {
+      errors.push(`Field ${index + 1}: Type is required`);
+    }
+
+    if (
+      ['radio', 'checkbox', 'select'].includes(field.type) &&
+      (!field.options || field.options.length === 0)
+    ) {
+      errors.push(
+        `Field ${index + 1}: Options are required for ${field.type} fields`
+      );
+    }
+  });
+
+  return {
+    isValid: errors.length === 0,
+    errors,
+  };
 };

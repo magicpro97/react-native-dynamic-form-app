@@ -87,9 +87,9 @@ export const ResponsiveTextInput: React.FC<ResponsiveTextInputProps> = ({
 
 const getStyles = (
   isTablet: boolean,
-  getFontSize: Function,
-  getSpacing: Function,
-  isLandscape: boolean,
+  getFontSize: (size: 'small' | 'medium' | 'large' | 'xlarge') => number,
+  getSpacing: (size: 'xs' | 'sm' | 'md' | 'lg' | 'xl') => number,
+  isLandscape: boolean
 ) => {
   const inputHeight = isTablet ? (isLandscape ? 56 : 52) : 48;
 
