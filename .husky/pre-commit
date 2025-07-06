@@ -1,0 +1,17 @@
+#!/bin/sh
+
+echo "🔍 Running pre-commit checks..."
+
+# Run lint-staged (auto-fix what can be fixed)
+npx lint-staged
+
+# Note: Temporarily disabled strict error checking for initial setup
+# Uncomment the lines below to enable strict error checking:
+# echo "🔍 Checking for critical linting issues..."
+# npm run lint -- --max-warnings 200 --quiet
+# if [ $? -ne 0 ]; then
+#   echo "❌ ESLint found critical syntax errors that need manual fixing. Please fix them before committing."
+#   exit 1
+# fi
+
+echo "✅ Pre-commit checks passed!"
