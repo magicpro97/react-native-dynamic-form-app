@@ -10,6 +10,9 @@ interface FormContextType {
   resetForm: () => void;
   setError: (name: string, error: string) => void;
   clearError: (name: string) => void;
+  clearAllErrors: () => void;
+  hasErrors: () => boolean;
+  getFieldError: (name: string) => string | undefined;
 }
 
 const FormContext = createContext<FormContextType | undefined>(undefined);
@@ -95,6 +98,18 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     });
   };
 
+  const clearAllErrors = () => {
+    errorDispatch({ type: 'RESET_ERRORS' });
+  };
+
+  const hasErrors = () => {
+    return Object.keys(errors).length > 0;
+  };
+
+  const getFieldError = (name: string) => {
+    return errors[name];
+  };
+
   return (
     <FormContext.Provider
       value={{
@@ -106,6 +121,9 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         resetForm,
         setError,
         clearError,
+        clearAllErrors,
+        hasErrors,
+        getFieldError,
       }}
     >
       {children}

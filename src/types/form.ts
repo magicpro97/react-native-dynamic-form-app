@@ -7,7 +7,7 @@ export interface FormFieldOption {
 export interface FormField {
   name: string;
   label: string;
-  type: 'text' | 'email' | 'number' | 'radio' | 'checkbox' | 'select' | 'signature' | 'photo';
+  type: 'text' | 'email' | 'number' | 'password' | 'radio' | 'checkbox' | 'select' | 'signature' | 'photo';
   required: boolean;
   placeholder?: string;
   options?: FormFieldOption[];

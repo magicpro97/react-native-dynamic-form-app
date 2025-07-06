@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { View, Text, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, Button, StyleSheet, Alert, Platform } from 'react-native';
 import SignatureScreen from 'react-native-signature-canvas';
 import { FormField } from '../../types/form';
 import { useForm } from '../../context/FormContext';
@@ -31,19 +31,39 @@ export const SignatureField: React.FC<SignatureFieldProps> = ({ field }) => {
   };
 
   const handleEmpty = () => {
-    Alert.alert('Error', 'Please provide a signature');
+    if (Platform.OS === 'web') {
+      alert('Please provide a signature');
+    } else {
+      Alert.alert('Error', 'Please provide a signature');
+    }
   };
 
-  const style = `.m-signature-pad--footer
-    .m-signature-pad--footer .description {
+  // Enhanced web style for better web compatibility
+  const webStyle = `
+    .m-signature-pad {
+      width: 100%;
+      height: 100%;
+      border: none;
+      background-color: white;
+    }
+    .m-signature-pad--body {
+      border: none;
+    }
+    .m-signature-pad--footer {
       display: none;
     }
-    .m-signature-pad--footer .signature-pad--actions {
-      display: none;
+    body, html {
+      width: 100%; 
+      height: 100%;
+      margin: 0;
+      padding: 0;
     }
-    body,html {
-      width: 100%; height: 100%;
-    }`;
+    canvas {
+      width: 100% !important;
+      height: 100% !important;
+      border: none;
+    }
+  `;
 
   return (
     <View style={styles.container}>
@@ -58,7 +78,7 @@ export const SignatureField: React.FC<SignatureFieldProps> = ({ field }) => {
             {value ? (
               <Text style={styles.signatureText}>✓ Signature captured</Text>
             ) : (
-              <Text style={styles.placeholderText}>No signature</Text>
+              <Text style={styles.placeholderText}>Tap to add signature</Text>
             )}
           </View>
           <Button
@@ -77,7 +97,14 @@ export const SignatureField: React.FC<SignatureFieldProps> = ({ field }) => {
             descriptionText="Sign here"
             clearText="Clear"
             confirmText="Save"
-            webStyle={style}
+            webStyle={webStyle}
+            // Web-specific props
+            backgroundColor="white"
+            penColor="black"
+            minWidth={2}
+            maxWidth={4}
+            // Better handling for web
+            androidHardwareAccelerationDisabled={Platform.OS === 'web'}
           />
           <View style={styles.signatureActions}>
             <Button title="Clear" onPress={handleClear} />

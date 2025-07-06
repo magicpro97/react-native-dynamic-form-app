@@ -1,0 +1,87 @@
+{
+  "title": "Enhanced Registration Form",
+  "fields": [
+    {
+      "name": "firstName",
+      "label": "First Name",
+      "type": "text",
+      "required": true,
+      "placeholder": "Enter your first name"
+    },
+    {
+      "name": "lastName",
+      "label": "Last Name",
+      "type": "text",
+      "required": true,
+      "placeholder": "Enter your last name"
+    },
+    {
+      "name": "email",
+      "label": "Email Address",
+      "type": "email",
+      "required": true,
+      "placeholder": "Enter your email address"
+    },
+    {
+      "name": "phone",
+      "label": "Phone Number",
+      "type": "text",
+      "required": true,
+      "placeholder": "Enter your phone number"
+    },
+    {
+      "name": "age",
+      "label": "Age",
+      "type": "number",
+      "required": true,
+      "placeholder": "Enter your age"
+    },
+    {
+      "name": "category",
+      "label": "Customer Category",
+      "type": "select",
+      "required": true,
+      "options": [
+        { "label": "Individual", "value": "individual" },
+        { "label": "Business", "value": "business" },
+        { "label": "Enterprise", "value": "enterprise" }
+      ]
+    },
+    {
+      "name": "companyName",
+      "label": "Company Name",
+      "type": "text",
+      "required": false,
+      "placeholder": "Enter company name (required for business customers)"
+    },
+    {
+      "name": "password",
+      "label": "Password",
+      "type": "password",
+      "required": true,
+      "placeholder": "Enter your password"
+    },
+    {
+      "name": "confirmPassword",
+      "label": "Confirm Password",
+      "type": "password",
+      "required": true,
+      "placeholder": "Confirm your password"
+    },
+    {
+      "name": "signature",
+      "label": "Digital Signature",
+      "type": "signature",
+      "required": true
+    },
+    {
+      "name": "agreeTerms",
+      "label": "I agree to the Terms and Conditions",
+      "type": "checkbox",
+      "required": true,
+      "options": [
+        { "label": "Yes, I agree", "value": "true" }
+      ]
+    }
+  ]
+}

@@ -10,6 +10,7 @@ import { CheckboxField } from './CheckboxField';
 import { SelectField } from './SelectField';
 import { SignatureField } from './SignatureField';
 import { PhotoField } from './PhotoField';
+import { PasswordField } from './PasswordField';
 
 interface DynamicFieldProps {
   field: FormField;
@@ -24,6 +25,8 @@ export const DynamicField: React.FC<DynamicFieldProps> = ({ field }) => {
     case 'email':
     case 'number':
       return <ResponsiveTextInput field={field} error={error} />;
+    case 'password':
+      return <PasswordField field={field} />;
     case 'radio':
       return <ResponsiveRadioField field={field} error={error} />;
     case 'checkbox':
