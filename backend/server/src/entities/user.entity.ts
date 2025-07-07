@@ -8,6 +8,12 @@ import {
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 
+export enum Role {
+  ADMIN = 'admin',
+  EDITOR = 'editor',
+  USER = 'user',
+}
+
 @Entity()
 export class User {
   @PrimaryGeneratedColumn('uuid')
@@ -21,6 +27,13 @@ export class User {
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @Column({
+    type: 'enum',
+    enum: Role,
+    default: Role.USER,
+  })
+  role: Role;
 
   @UpdateDateColumn()
   updatedAt: Date;

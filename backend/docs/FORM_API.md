@@ -1,143 +1,54 @@
-# Form Configuration API (NestJS Backend)
+# FORM API
 
-## Tổng quan
+## Submit Form Response
 
-API này cung cấp các endpoint để quản lý form configuration động, phục vụ cho frontend dynamic form app.
+### POST /form-responses
 
-## Base URL
+Submit a filled form (user answers).
 
-```
-http://localhost:3000/forms
-```
-
-## Endpoints
-
-### 1. Lấy danh sách form configurations (phân trang)
-
-**GET** `/forms?page=1&limit=10`
-
-**Response:**
-```json
-{
-  "forms": [ { ...formConfig } ],
-  "total": 12,
-  "page": 1,
-  "limit": 10
-}
-```
-
----
-
-### 2. Lấy form configuration theo ID
-
-**GET** `/forms/{id}`
-
-**Response:**
-```json
-{
-  "id": "uuid",
-  "name": "contact-us",
-  "title": "Contact Us",
-  "description": "...",
-  "version": "1.0",
-  "fields": [ ... ],
-  "settings": { ... },
-  "metadata": { ... },
-  "createdAt": "...",
-  "updatedAt": "..."
-}
-```
-
----
-
-### 3. Lấy form configuration theo tên
-
-**GET** `/forms/name/{name}`
-
----
-
-### 4. Tìm kiếm form configurations
-
-**GET** `/forms/search?query=survey&page=1&limit=10`
-
----
-
-### 5. Tạo form configuration mới
-
-**POST** `/forms`
+**Headers:**
+- Authorization: Bearer <access_token>
+- Content-Type: application/json
 
 **Body:**
 ```json
 {
-  "name": "survey-form",
-  "title": "Customer Survey",
-  "description": "Customer satisfaction survey",
-  "version": "1.0",
-  "fields": [ ... ],
-  "settings": { ... }
+  "formId": "string (id of form configuration)",
+  "answers": {
+    "field1": "value1",
+    "field2": 123,
+    "...": "..."
+  }
 }
 ```
-
----
-
-### 6. Cập nhật form configuration
-
-**PUT** `/forms/{id}`
-
-**Body:** (các trường cần cập nhật)
-
----
-
-### 7. Xóa form configuration
-
-**DELETE** `/forms/{id}`
-
----
-
-### 8. Export toàn bộ form configurations
-
-**GET** `/forms/export`
 
 **Response:**
 ```json
 {
-  "exportInfo": {
-    "exportDate": "...",
-    "totalForms": 3,
-    "exportedBy": "Dynamic Form Backend",
-    "version": "1.0.0"
-  },
-  "formConfigurations": [ ... ]
+  "id": "string",
+  "formId": "string",
+  "answers": { ... },
+  "submittedBy": "string (userId)",
+  "submittedAt": "ISO date"
 }
 ```
 
 ---
 
-## Kiểm thử nhanh với curl
+## Get Form Responses
 
-**Tạo form:**
-```bash
-curl -X POST http://localhost:3000/forms -H "Content-Type: application/json" -d '{"name":"test-form","title":"Test","version":"1.0","fields":[]}'
-```
+### GET /form-responses?formId=<formId>
 
-**Lấy danh sách:**
-```bash
-curl http://localhost:3000/forms
-```
+Get all responses for a form (admin/editor only).
 
-**Tìm kiếm:**
-```bash
-curl http://localhost:3000/forms/search?query=test
-```
+### GET /form-responses/my
 
-**Export:**
-```bash
-curl http://localhost:3000/forms/export
-```
+Get all responses submitted by the current user.
 
 ---
 
-## Ghi chú
+## Notes
 
-- Tất cả API trả về lỗi sẽ có status code và message rõ ràng.
-- Khi code module mới sẽ bổ sung docs tương tự tại backend/docs.
+- Only authenticated users can submit form responses.
+- Only admin/editor can create/update form configurations.
+- User can only submit responses to approved forms.

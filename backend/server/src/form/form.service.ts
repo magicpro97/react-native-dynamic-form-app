@@ -74,4 +74,20 @@ export class FormService {
       formConfigurations: forms,
     };
   }
+
+  async approve(id: string, userId: string) {
+    const form = await this.findById(id);
+    form.status = 'approved';
+    form.approvedBy = userId;
+    form.rejectedBy = null;
+    return this.formRepo.save(form);
+  }
+
+  async reject(id: string, userId: string) {
+    const form = await this.findById(id);
+    form.status = 'rejected';
+    form.rejectedBy = userId;
+    form.approvedBy = null;
+    return this.formRepo.save(form);
+  }
 }

@@ -32,6 +32,15 @@ export class FormConfiguration {
   @Column({ type: 'jsonb', nullable: true })
   metadata: any;
 
+  @Column({ default: 'pending' })
+  status: 'pending' | 'approved' | 'rejected';
+
+  @Column({ type: 'varchar', nullable: true })
+  approvedBy: string | null;
+
+  @Column({ type: 'varchar', nullable: true })
+  rejectedBy: string | null;
+
   @CreateDateColumn()
   createdAt: Date;
 
