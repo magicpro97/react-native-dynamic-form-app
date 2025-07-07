@@ -3,7 +3,7 @@
 echo "🔍 Running pre-commit checks..."
 
 # Run lint-staged (auto-fix what can be fixed)
-npx lint-staged
+cd frontend && npx lint-staged
 
 # Note: Temporarily disabled strict error checking for initial setup
 # Uncomment the lines below to enable strict error checking:
