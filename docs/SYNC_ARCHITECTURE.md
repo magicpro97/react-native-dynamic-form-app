@@ -265,19 +265,53 @@ for (const form of pendingForms) {
 ### **Offline Queue Screen**
 
 ```typescript
-// Form list với status
+// Form list với status và actions
 ┌─────────────────────────┐
 │ 📋 Customer Survey      │
 │ Status: ✅ Synced       │
 │ 2 minutes ago           │
+│ [View] [Delete]         │
 ├─────────────────────────┤
 │ 📋 Feedback Form       │
 │ Status: 📤 Pending     │
 │ 5 minutes ago           │
+│ [View] [Sync] [Delete]  │
 ├─────────────────────────┤
 │ 📋 Quality Check       │
 │ Status: ⚠️ Conflict     │
 │ 10 minutes ago          │
+│ [View] [Delete]         │
+└─────────────────────────┘
+```
+
+### **View Form Screen**
+
+```typescript
+// Dedicated form viewer với structured layout
+┌─────────────────────────┐
+│ ← Back    View Form  📤 │ <- Header với navigation và export
+├─────────────────────────┤
+│ 📋 Customer Survey      │ <- Form title
+│                         │
+│ Status: ✅ Synced       │ <- Status badge với color coding
+│ Submitted: Dec 15, 2024 │ <- Submission timestamp
+│ Updated: Dec 15, 2024   │ <- Last update time
+│ Sync Attempts: 1        │ <- Retry counter (nếu có)
+├─────────────────────────┤
+│ Form Data               │ <- Section header
+│                         │
+│ Customer Name:          │ <- Field labels
+│ John Doe                │ <- Field values
+│                         │
+│ Feedback Type:          │
+│ • Product Quality       │ <- Array values
+│ • Service               │
+│                         │
+│ Rating:                 │
+│ 5 (Excellent)           │ <- Formatted values
+│                         │
+│ Signature:              │
+│ [📎 View File]          │ <- File/image buttons
 └─────────────────────────┘
 ```
 
@@ -386,6 +420,9 @@ const AUTH_TOKEN_KEY = 'auth_token';
 - **Context**: `src/context/SyncContext.tsx`
 - **UI Components**: `src/components/sync/SyncStatus.tsx`
 - **Toast System**: `src/components/ui/Toast.tsx`
+- **Offline Queue**: `src/screens/OfflineQueueScreen.tsx`
+- **View Form**: `src/screens/ViewFormScreen.tsx`
+- **Routes**: `app/offline-queue.tsx`, `app/view-form.tsx`
 
 ---
 
