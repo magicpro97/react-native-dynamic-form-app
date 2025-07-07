@@ -12,6 +12,7 @@ A **production-ready** mobile application built with **Expo Router** and **React
 - **Background Sync**: Automatic 30-second sync with conflict resolution
 - **Real-time Notifications**: Toast notifications for sync status
 - **Responsive Design**: iPad/desktop/phone optimized layouts
+- **Form Export**: Export form configurations to JSON files with cross-platform support
 
 ### 📱 User Experience
 
@@ -130,6 +131,7 @@ npm run ios        # iOS version
 - **Password Field**: Secure input with visibility toggle
 - **Web-Compatible Signature**: Canvas-based signature field optimized for web
 - **Business-Logic Validation**: Flexible validation with custom error messages
+- **Form Configuration Export**: Export form configurations to JSON files for backup and sharing
 - **Comprehensive Documentation**: Detailed technical specifications
 
 ## 🎯 Usage Examples

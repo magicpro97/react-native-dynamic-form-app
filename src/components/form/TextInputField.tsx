@@ -9,7 +9,8 @@ interface TextInputFieldProps {
 
 export const TextInputField: React.FC<TextInputFieldProps> = ({ field }) => {
   const { formState, setField, errors } = useForm();
-  const value = formState[field.name] || '';
+  const rawValue = formState[field.name] || '';
+  const value = typeof rawValue === 'string' ? rawValue : String(rawValue || '');
   const error = errors[field.name];
 
   return (

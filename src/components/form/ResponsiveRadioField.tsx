@@ -1,15 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, ScrollView } from 'react-native';
-import { FormField, FormErrors } from '../../types/form';
+import { FormField, FormFieldOption } from '../../types/form';
 import { useForm } from '../../context/FormContext';
 import { useResponsive } from '../../hooks/useResponsive';
-import {
-  colors,
-  spacing,
-  borderRadius,
-  fontSize,
-  fontWeight,
-} from '../../theme';
+import { colors, fontWeight } from '../../theme';
 import { RiskIndicator, getFieldRiskLevel } from '../ui/RiskIndicator';
 import { Button } from '../ui';
 
@@ -31,7 +25,7 @@ export const ResponsiveRadioField: React.FC<ResponsiveRadioFieldProps> = ({
   const styles = getStyles(isTablet, getFontSize, getSpacing, isLandscape);
   const columns = getColumns();
 
-  const renderRadioOption = ({ item, index }: { item: any; index: number }) => (
+  const renderRadioOption = ({ item }: { item: FormFieldOption }) => (
     <View style={[styles.radioOption, { flex: 1 / columns }]}>
       <Button
         title={`${item.value === value ? '●' : '○'} ${item.label}`}
@@ -71,7 +65,7 @@ export const ResponsiveRadioField: React.FC<ResponsiveRadioFieldProps> = ({
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.listContainer}
             >
-              {field.options?.map((option, index) => (
+              {field.options?.map((option) => (
                 <View key={option.value} style={styles.radioOption}>
                   <Button
                     title={`${option.value === value ? '●' : '○'} ${option.label}`}
@@ -101,7 +95,7 @@ const getStyles = (
   isTablet: boolean,
   getFontSize: (size: 'small' | 'medium' | 'large' | 'xlarge') => number,
   getSpacing: (size: 'xs' | 'sm' | 'md' | 'lg' | 'xl') => number,
-  _isLandscape: boolean
+  _isLandscape: boolean,
 ) => {
   return StyleSheet.create({
     container: {

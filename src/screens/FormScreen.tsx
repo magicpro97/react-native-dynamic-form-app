@@ -11,7 +11,7 @@ import {
 import { useRouter } from 'expo-router';
 import { FormProvider, useForm } from '../context/FormContext';
 import { DynamicField } from '../components/form/DynamicField';
-import { FormConfig } from '../types/form';
+import { FormConfig, FormState } from '../types/form';
 import { validateForm, formatFormData } from '../utils/formValidation';
 import { saveOfflineForm } from '../utils/storage';
 import { submitFormAPI } from '../services/api';
@@ -46,16 +46,14 @@ const FormContent: React.FC = () => {
       const submissionData = formatFormData(formConfig.fields, formState);
 
       // Save to offline storage first
-      const formId = saveOfflineForm(submissionData, formConfig.title);
+      saveOfflineForm(submissionData as FormState, formConfig.title);
       const submissionTime = Date.now();
 
       try {
         // Try to submit online
-        const response = await submitFormAPI(submissionData);
+        const response = await submitFormAPI(submissionData as FormState);
 
         if (response.success) {
-          console.log('Form submitted successfully:', response.data);
-
           // Navigate to success screen
           router.push({
             pathname: '/success',
@@ -73,16 +71,14 @@ const FormContent: React.FC = () => {
             response.message + ' Form has been saved locally.',
           );
         }
-      } catch (error) {
-        console.error('Online submission failed:', error);
+      } catch {
         Alert.alert(
           'Saved Offline',
           'Unable to submit online right now. Your form has been saved locally and will be synced when connection is available.',
         );
       }
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'Failed to save form. Please try again.');
-      console.error('Form submission error:', error);
     } finally {
       setIsSubmitting(false);
     }

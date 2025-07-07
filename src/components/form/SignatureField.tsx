@@ -37,7 +37,7 @@ const WebSignatureCanvas: React.FC<{
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   }, []);
 
-  const startDrawing = (e: any) => {
+  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (Platform.OS !== 'web') return;
 
     setIsDrawing(true);
@@ -56,7 +56,7 @@ const WebSignatureCanvas: React.FC<{
     }
   };
 
-  const draw = (e: any) => {
+  const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!isDrawing || Platform.OS !== 'web') return;
 
     const canvas = canvasRef.current;
@@ -136,12 +136,14 @@ const WebSignatureCanvas: React.FC<{
 };
 
 // Native signature component (using existing library)
-let SignatureScreen: any;
+// Native signature component (using existing library)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let SignatureScreen: any = null;
 if (Platform.OS !== 'web') {
   try {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     SignatureScreen = require('react-native-signature-canvas').default;
-  } catch (_e) {
+  } catch {
     // Fallback if library is not installed
     SignatureScreen = null;
   }
@@ -154,7 +156,7 @@ interface SignatureFieldProps {
 export const SignatureField: React.FC<SignatureFieldProps> = ({ field }) => {
   const { formState, setField, errors } = useForm();
   const [showSignature, setShowSignature] = useState(false);
-  const signatureRef = useRef<any>(null);
+  const signatureRef = useRef<{ clearSignature?: () => void } | null>(null);
   const value = formState[field.name] || '';
   const error = errors[field.name];
 
@@ -168,7 +170,7 @@ export const SignatureField: React.FC<SignatureFieldProps> = ({ field }) => {
       // Clear handled by web component
       return;
     }
-    if (signatureRef.current) {
+    if (signatureRef.current?.clearSignature) {
       signatureRef.current.clearSignature();
     }
   };

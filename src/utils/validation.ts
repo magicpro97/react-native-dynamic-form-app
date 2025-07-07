@@ -12,25 +12,28 @@ export interface ValidationRule {
     | 'custom'
     | 'conditional';
   message: string;
-  value?: any;
-  validator?: (value: any, formState: FormState) => boolean;
+  value?: string | number | boolean | RegExp;
+  validator?: (value: string | number | boolean | File | null, formState: FormState) => boolean;
   condition?: (formState: FormState) => boolean;
 }
 
 // Field configuration with custom validation
 export interface FieldConfig extends FormField {
   validation?: ValidationRule[];
-  customValidation?: (value: any, formState: FormState) => string | null;
+  customValidation?: (value: string | number | boolean | File | null, formState: FormState) => string | null;
   dependsOn?: string[]; // Other fields this field depends on
 }
 
 // Built-in validation functions
 export const validators = {
-  required: (value: any) => {
+  required: (value: string | number | boolean | File | null) => {
+    if (value instanceof File) {
+      return value.size > 0;
+    }
     if (typeof value === 'string') {
       return value.trim().length > 0;
     }
-    return value !== null && value !== undefined && value !== '';
+    return value !== null && value !== undefined;
   },
 
   email: (value: string) => {
@@ -92,9 +95,9 @@ export const validators = {
 // Main validation function
 export const validateField = (
   fieldName: string,
-  value: any,
+  value: string | number | boolean | File | null,
   fieldConfig: FieldConfig,
-  formState: FormState
+  formState: FormState,
 ): string | null => {
   // Skip validation if field is empty and not required
   if (!fieldConfig.validation || fieldConfig.validation.length === 0) {
@@ -128,20 +131,20 @@ export const validateField = (
         break;
 
       case 'minLength':
-        if (value && typeof value === 'string') {
+        if (value && typeof value === 'string' && typeof rule.value === 'number') {
           isValid = validators.minLength(value, rule.value);
         }
         break;
 
       case 'maxLength':
-        if (value && typeof value === 'string') {
+        if (value && typeof value === 'string' && typeof rule.value === 'number') {
           isValid = validators.maxLength(value, rule.value);
         }
         break;
 
       case 'pattern':
-        if (value && typeof value === 'string') {
-          isValid = validators.pattern(value, rule.value);
+        if (value && typeof value === 'string' && rule.value && typeof rule.value === 'object' && 'test' in rule.value) {
+          isValid = validators.pattern(value, rule.value as RegExp);
         }
         break;
 
@@ -182,7 +185,7 @@ export const validateField = (
 // Validate entire form
 export const validateForm = (
   formState: FormState,
-  fieldConfigs: FieldConfig[]
+  fieldConfigs: FieldConfig[],
 ): { [key: string]: string } => {
   const errors: { [key: string]: string } = {};
 
@@ -191,7 +194,7 @@ export const validateForm = (
       config.name,
       formState[config.name],
       config,
-      formState
+      formState,
     );
     if (error) {
       errors[config.name] = error;
@@ -204,8 +207,9 @@ export const validateForm = (
 // Business logic validation examples
 export const businessValidators = {
   // Age validation based on other fields
-  validateAge: (age: string, formState: FormState) => {
-    const ageNum = parseInt(age);
+  validateAge: (age: string | number | boolean | File | null, formState: FormState) => {
+    if (typeof age !== 'string' && typeof age !== 'number') return null;
+    const ageNum = typeof age === 'string' ? parseInt(age) : age;
     const category = formState.category;
 
     if (category === 'child' && ageNum >= 18) {
@@ -218,9 +222,12 @@ export const businessValidators = {
   },
 
   // Salary validation based on position
-  validateSalary: (salary: string, formState: FormState) => {
-    const salaryNum = parseFloat(salary);
+  validateSalary: (salary: string | number | boolean | File | null, formState: FormState) => {
+    if (typeof salary !== 'string' && typeof salary !== 'number') return null;
+    const salaryNum = typeof salary === 'string' ? parseFloat(salary) : salary;
     const position = formState.position;
+
+    if (typeof position !== 'string') return null;
 
     const minSalaries: { [key: string]: number } = {
       intern: 1000,
@@ -237,8 +244,12 @@ export const businessValidators = {
   },
 
   // Date range validation
-  validateDateRange: (endDate: string, formState: FormState) => {
-    const start = new Date(formState.startDate);
+  validateDateRange: (endDate: string | number | boolean | File | null, formState: FormState) => {
+    if (typeof endDate !== 'string') return null;
+    const startDate = formState.startDate;
+    if (typeof startDate !== 'string') return null;
+    
+    const start = new Date(startDate);
     const end = new Date(endDate);
 
     if (end <= start) {
@@ -249,9 +260,10 @@ export const businessValidators = {
 
   // Password confirmation
   validatePasswordConfirmation: (
-    confirmPassword: string,
-    formState: FormState
+    confirmPassword: string | number | boolean | File | null,
+    formState: FormState,
   ) => {
+    if (typeof confirmPassword !== 'string') return null;
     if (confirmPassword !== formState.password) {
       return 'Passwords do not match';
     }
@@ -259,7 +271,7 @@ export const businessValidators = {
   },
 
   // Credit card validation
-  validateCreditCard: (cardNumber: string, formState: FormState) => {
+  validateCreditCard: (cardNumber: string, _formState: FormState) => {
     // Luhn algorithm
     const digits = cardNumber.replace(/\s/g, '').split('').map(Number);
     let sum = 0;
@@ -282,7 +294,7 @@ export const businessValidators = {
   },
 
   // File size validation
-  validateFileSize: (file: any, formState: FormState) => {
+  validateFileSize: (file: File, _formState: FormState) => {
     const maxSize = 5 * 1024 * 1024; // 5MB
     if (file && file.size > maxSize) {
       return 'File size must be less than 5MB';
@@ -291,7 +303,8 @@ export const businessValidators = {
   },
 
   // Signature validation
-  validateSignature: (signature: string, formState: FormState) => {
+  validateSignature: (signature: string | number | boolean | File | null, _formState: FormState) => {
+    if (typeof signature !== 'string') return 'Signature is required';
     if (!signature || signature.trim().length === 0) {
       return 'Signature is required';
     }
@@ -337,7 +350,7 @@ export const exampleFieldConfigs: FieldConfig[] = [
       {
         type: 'custom',
         message: 'Age must be between 0 and 120',
-        validator: value => validators.age(value),
+        validator: value => value ? validators.age(String(value)) : false,
       },
     ],
     customValidation: businessValidators.validateAge,
@@ -356,7 +369,7 @@ export const exampleFieldConfigs: FieldConfig[] = [
       {
         type: 'custom',
         message: 'Please enter a valid amount',
-        validator: value => validators.positiveNumber(value),
+        validator: value => value ? validators.positiveNumber(String(value)) : false,
       },
     ],
     customValidation: businessValidators.validateSalary,

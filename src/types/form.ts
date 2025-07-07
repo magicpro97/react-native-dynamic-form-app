@@ -29,15 +29,15 @@ export interface FormConfig {
 
 // Form state types
 export interface FormState {
-  [key: string]: any;
+  [key: string]: string | number | boolean | File | null;
 }
 
 export interface FormAction {
   type: 'SET_FIELD' | 'SET_MULTIPLE_FIELDS' | 'RESET_FORM';
   payload?: {
     name?: string;
-    value?: any;
-    fields?: { [key: string]: any };
+    value?: string | number | boolean | File | null;
+    fields?: { [key: string]: string | number | boolean | File | null };
   };
 }
 
@@ -65,5 +65,5 @@ export interface OfflineFormData {
 export interface SubmitFormResponse {
   success: boolean;
   message: string;
-  data?: any;
+  data?: Record<string, unknown>;
 }

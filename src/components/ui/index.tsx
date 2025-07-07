@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   ViewStyle,
-  TextStyle,
   TouchableOpacity,
 } from 'react-native';
 import {
@@ -100,7 +99,7 @@ interface TextProps {
   children: React.ReactNode;
   variant?: 'h1' | 'h2' | 'h3' | 'body1' | 'body2' | 'caption';
   color?: string;
-  style?: any;
+  style?: object;
 }
 
 export const Typography: React.FC<TextProps> = ({

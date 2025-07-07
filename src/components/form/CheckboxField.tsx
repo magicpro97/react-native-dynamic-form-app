@@ -9,14 +9,15 @@ interface CheckboxFieldProps {
 
 export const CheckboxField: React.FC<CheckboxFieldProps> = ({ field }) => {
   const { formState, setField, errors } = useForm();
-  const values = formState[field.name] || [];
+  const rawValue = formState[field.name] || [];
+  const values: string[] = Array.isArray(rawValue) ? rawValue.map(String) : [];
   const error = errors[field.name];
 
   const handleToggle = (optionValue: string) => {
     const newValues = values.includes(optionValue)
       ? values.filter((v: string) => v !== optionValue)
       : [...values, optionValue];
-    setField(field.name, newValues);
+    setField(field.name, newValues as unknown as string | number | boolean | File | null);
   };
 
   return (

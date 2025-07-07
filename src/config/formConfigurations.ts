@@ -93,7 +93,8 @@ export const customerRegistrationFields: FieldConfig[] = [
         type: 'custom',
         message: 'Age must be between 18 and 120',
         validator: value => {
-          const age = parseInt(value);
+          if (typeof value !== 'string' && typeof value !== 'number') return false;
+          const age = parseInt(String(value));
           return age >= 18 && age <= 120;
         },
       },
@@ -129,7 +130,7 @@ export const customerRegistrationFields: FieldConfig[] = [
         condition: formState =>
           formState.category === 'business' ||
           formState.category === 'enterprise',
-        validator: value => value && value.trim().length > 0,
+        validator: (value) => typeof value === 'string' && value.trim().length > 0,
       },
     ],
   },
@@ -268,7 +269,8 @@ export const jobApplicationFields: FieldConfig[] = [
         type: 'custom',
         message: 'Experience must be between 0 and 50 years',
         validator: value => {
-          const exp = parseInt(value);
+          if (typeof value !== 'string' && typeof value !== 'number') return false;
+          const exp = parseInt(String(value));
           return exp >= 0 && exp <= 50;
         },
       },
@@ -288,7 +290,8 @@ export const jobApplicationFields: FieldConfig[] = [
         type: 'custom',
         message: 'Please enter a valid salary amount',
         validator: value => {
-          const salary = parseFloat(value);
+          if (typeof value !== 'string' && typeof value !== 'number') return false;
+          const salary = parseFloat(String(value));
           return salary > 0 && salary <= 1000000;
         },
       },
@@ -411,7 +414,7 @@ export const eventRegistrationFields: FieldConfig[] = [
         type: 'conditional',
         message: 'Emergency contact is required for VIP tickets',
         condition: formState => formState.ticketType === 'vip',
-        validator: value => value && value.trim().length > 0,
+        validator: (value) => typeof value === 'string' && value.trim().length > 0,
       },
     ],
   },
@@ -425,7 +428,7 @@ export const eventRegistrationFields: FieldConfig[] = [
         type: 'conditional',
         message: 'Emergency contact phone is required for VIP tickets',
         condition: formState => formState.ticketType === 'vip',
-        validator: value => value && value.trim().length > 0,
+        validator: (value) => typeof value === 'string' && value.trim().length > 0,
       },
       {
         type: 'phone',

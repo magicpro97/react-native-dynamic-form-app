@@ -7,17 +7,10 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { FormField, FormErrors } from '../../types/form';
+import { FormField } from '../../types/form';
 import { useForm } from '../../context/FormContext';
 import { useResponsive } from '../../hooks/useResponsive';
-import {
-  colors,
-  spacing,
-  borderRadius,
-  fontSize,
-  fontWeight,
-  shadows,
-} from '../../theme';
+import { colors, borderRadius, fontWeight, shadows } from '../../theme';
 import { RiskIndicator, getFieldRiskLevel } from '../ui/RiskIndicator';
 
 interface ResponsiveTextInputProps {
@@ -32,7 +25,8 @@ export const ResponsiveTextInput: React.FC<ResponsiveTextInputProps> = ({
   const { formState, setField } = useForm();
   const { isTablet, getFontSize, getSpacing, isLandscape } = useResponsive();
 
-  const value = formState[field.name] || '';
+  const rawValue = formState[field.name] || '';
+  const value = typeof rawValue === 'string' ? rawValue : String(rawValue || '');
   const riskLevel = getFieldRiskLevel(field);
 
   const styles = getStyles(isTablet, getFontSize, getSpacing, isLandscape);
@@ -89,7 +83,7 @@ const getStyles = (
   isTablet: boolean,
   getFontSize: (size: 'small' | 'medium' | 'large' | 'xlarge') => number,
   getSpacing: (size: 'xs' | 'sm' | 'md' | 'lg' | 'xl') => number,
-  isLandscape: boolean
+  isLandscape: boolean,
 ) => {
   const inputHeight = isTablet ? (isLandscape ? 56 : 52) : 48;
 

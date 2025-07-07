@@ -25,7 +25,7 @@ const FormWithValidation: React.FC = () => {
           'Please check the form and fix any errors.',
         );
       }
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'An error occurred while submitting the form.');
     } finally {
       setSubmitting(false);

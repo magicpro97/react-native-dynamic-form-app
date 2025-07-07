@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import {
   View,
-  Text,
   ScrollView,
   StyleSheet,
   SafeAreaView,
@@ -13,19 +12,12 @@ import {
 import { useRouter } from 'expo-router';
 import { FormProvider, useForm } from '../../context/FormContext';
 import { DynamicField } from './DynamicField';
-import { FormConfig } from '../../types/form';
+import { FormConfig, FormField, FormState } from '../../types/form';
 import { validateForm, formatFormData } from '../../utils/formValidation';
 import { saveOfflineForm } from '../../utils/storage';
 import { submitFormAPI } from '../../services/api';
 import { useResponsive } from '../../hooks/useResponsive';
-import {
-  colors,
-  spacing,
-  borderRadius,
-  fontSize,
-  fontWeight,
-  shadows,
-} from '../../theme';
+import { colors } from '../../theme';
 import { Card, Button, Typography } from '../ui';
 import formData from '../../assets/form.json';
 
@@ -55,21 +47,19 @@ const ResponsiveFormContent: React.FC = () => {
         });
         Alert.alert(
           'Validation Error',
-          'Please correct the errors and try again.'
+          'Please correct the errors and try again.',
         );
         return;
       }
 
       const submissionData = formatFormData(formConfig.fields, formState);
-      const formId = saveOfflineForm(submissionData, formConfig.title);
+      saveOfflineForm(submissionData as FormState, formConfig.title);
       const submissionTime = Date.now();
 
       try {
-        const response = await submitFormAPI(submissionData);
+        const response = await submitFormAPI(submissionData as FormState);
 
         if (response.success) {
-          console.log('Form submitted successfully:', response.data);
-
           router.push({
             pathname: '/success',
             params: {
@@ -82,19 +72,17 @@ const ResponsiveFormContent: React.FC = () => {
         } else {
           Alert.alert(
             'Submission Failed',
-            response.message + ' Form has been saved locally.'
+            response.message + ' Form has been saved locally.',
           );
         }
-      } catch (error) {
-        console.error('Online submission failed:', error);
+      } catch {
         Alert.alert(
           'Saved Offline',
-          'Unable to submit online right now. Your form has been saved locally and will be synced when connection is available.'
+          'Unable to submit online right now. Your form has been saved locally and will be synced when connection is available.',
         );
       }
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'Failed to save form. Please try again.');
-      console.error('Form submission error:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -112,12 +100,12 @@ const ResponsiveFormContent: React.FC = () => {
     isLandscape,
     getPadding,
     getFontSize,
-    getSpacing
+    getSpacing,
   );
   const columns = getColumns();
 
   // Render form fields in grid or list layout
-  const renderFormField = ({ item, index }: { item: any; index: number }) => (
+  const renderFormField = ({ item }: { item: FormField }) => (
     <View
       style={[
         styles.fieldWrapper,
@@ -217,7 +205,7 @@ const getStyles = (
   isLandscape: boolean,
   getPadding: () => number,
   getFontSize: (size: 'small' | 'medium' | 'large' | 'xlarge') => number,
-  getSpacing: (size: 'xs' | 'sm' | 'md' | 'lg' | 'xl') => number
+  getSpacing: (size: 'xs' | 'sm' | 'md' | 'lg' | 'xl') => number,
 ) => {
   return StyleSheet.create({
     container: {

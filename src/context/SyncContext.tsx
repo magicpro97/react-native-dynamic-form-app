@@ -78,8 +78,8 @@ export const SyncProvider: React.FC<{ children: ReactNode }> = ({
     try {
       const stats = await backgroundSyncService.syncNow();
       setSyncStats(stats);
-    } catch (error) {
-      console.error('Error during manual sync:', error);
+    } catch {
+      // Sync error handled silently
     } finally {
       setIsSyncing(false);
       refreshPendingCount();

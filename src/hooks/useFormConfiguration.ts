@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import {
   FormConfiguration,
   FormListResponse,
-  FormDetailResponse,
   fetchFormConfigurations,
   fetchFormConfigurationById,
   fetchFormConfigurationByName,
@@ -29,7 +28,7 @@ export const useFormConfigurations = (page = 1, limit = 10) => {
       } else {
         setError(response.message);
       }
-    } catch (err) {
+    } catch {
       setError('An unexpected error occurred');
     } finally {
       setLoading(false);
@@ -66,7 +65,7 @@ export const useFormConfiguration = (id: string | null) => {
       } else {
         setError(response.message);
       }
-    } catch (err) {
+    } catch {
       setError('An unexpected error occurred');
     } finally {
       setLoading(false);
@@ -103,7 +102,7 @@ export const useFormConfigurationByName = (name: string | null) => {
       } else {
         setError(response.message);
       }
-    } catch (err) {
+    } catch {
       setError('An unexpected error occurred');
     } finally {
       setLoading(false);
@@ -128,7 +127,7 @@ export const useFormConfigurationActions = () => {
   const [error, setError] = useState<string | null>(null);
 
   const createForm = async (
-    formData: Omit<FormConfiguration, 'id' | 'createdAt' | 'updatedAt'>
+    formData: Omit<FormConfiguration, 'id' | 'createdAt' | 'updatedAt'>,
   ) => {
     setLoading(true);
     setError(null);
@@ -153,7 +152,7 @@ export const useFormConfigurationActions = () => {
         setError(response.message);
         return { success: false, data: null };
       }
-    } catch (err) {
+    } catch {
       setError('An unexpected error occurred');
       return { success: false, data: null };
     } finally {
@@ -163,7 +162,7 @@ export const useFormConfigurationActions = () => {
 
   const updateForm = async (
     id: string,
-    formData: Partial<FormConfiguration>
+    formData: Partial<FormConfiguration>,
   ) => {
     setLoading(true);
     setError(null);
@@ -175,7 +174,7 @@ export const useFormConfigurationActions = () => {
         setError(response.message);
         return { success: false, data: null };
       }
-    } catch (err) {
+    } catch {
       setError('An unexpected error occurred');
       return { success: false, data: null };
     } finally {
@@ -194,7 +193,7 @@ export const useFormConfigurationActions = () => {
         setError(response.message);
         return { success: false };
       }
-    } catch (err) {
+    } catch {
       setError('An unexpected error occurred');
       return { success: false };
     } finally {
@@ -232,7 +231,7 @@ export const useFormConfigurationSearch = () => {
       } else {
         setError(response.message);
       }
-    } catch (err) {
+    } catch {
       setError('An unexpected error occurred');
     } finally {
       setLoading(false);

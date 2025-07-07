@@ -11,7 +11,7 @@ import {
   TextInput,
   Modal,
 } from 'react-native';
-import { colors, spacing, fontSize, fontWeight } from '../theme';
+import { colors, fontWeight } from '../theme';
 import { useResponsive } from '../hooks/useResponsive';
 import {
   useFormConfigurations,
@@ -22,6 +22,7 @@ import {
 import { FormConfiguration } from '../services/api';
 import { Button } from '../components/ui';
 import { FormEditor } from '../components/form/FormEditor';
+import { exportFormConfigurationToJSON, exportMultipleFormConfigurationsToJSON } from '../utils/fileExport';
 
 export const FormConfigurationScreen: React.FC = () => {
   const { isTablet, getFontSize, getSpacing } = useResponsive();
@@ -29,7 +30,7 @@ export const FormConfigurationScreen: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
   const [editingForm, setEditingForm] = useState<FormConfiguration | null>(
-    null
+    null,
   );
   const [showEditor, setShowEditor] = useState(false);
 
@@ -48,7 +49,6 @@ export const FormConfigurationScreen: React.FC = () => {
   } = useFormConfiguration(selectedFormId);
 
   const {
-    createForm,
     updateForm,
     deleteForm,
     loading: actionLoading,
@@ -77,7 +77,21 @@ export const FormConfigurationScreen: React.FC = () => {
 
     const result = await updateForm(editingForm.id, formData);
     if (result.success) {
-      Alert.alert('Success', 'Form updated successfully');
+      Alert.alert(
+        'Success', 
+        'Form updated successfully',
+        [
+          { text: 'OK', style: 'default' },
+          {
+            text: 'Export JSON',
+            onPress: async () => {
+              // Get the updated form data
+              const updatedForm = { ...editingForm, ...formData };
+              await handleExportForm(updatedForm as FormConfiguration);
+            },
+          },
+        ],
+      );
       setShowEditor(false);
       setEditingForm(null);
       refetchList();
@@ -115,7 +129,7 @@ export const FormConfigurationScreen: React.FC = () => {
             }
           },
         },
-      ]
+      ],
     );
   };
 
@@ -125,6 +139,37 @@ export const FormConfigurationScreen: React.FC = () => {
     } else {
       clearResults();
     }
+  };
+
+  const handleExportForm = async (form: FormConfiguration) => {
+    const success = await exportFormConfigurationToJSON(form);
+    if (success) {
+      // Success message is handled in the export function
+    }
+  };
+
+  const handleExportAllForms = async () => {
+    if (!formsList || !formsList.forms || formsList.forms.length === 0) {
+      Alert.alert('No Forms', 'There are no forms to export.');
+      return;
+    }
+
+    Alert.alert(
+      'Export All Forms',
+      `Are you sure you want to export all ${formsList.forms.length} form configurations?`,
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Export',
+          onPress: async () => {
+            const success = await exportMultipleFormConfigurationsToJSON(formsList.forms);
+            if (success) {
+              // Success message is handled in the export function
+            }
+          },
+        },
+      ],
+    );
   };
 
   const renderFormItem = (form: FormConfiguration) => (
@@ -151,6 +196,16 @@ export const FormConfigurationScreen: React.FC = () => {
           variant='outline'
           size='small'
           style={styles.actionButton}
+        />
+        <Button
+          title='Export'
+          onPress={() => handleExportForm(form)}
+          variant='outline'
+          size='small'
+          style={StyleSheet.flatten([
+            styles.actionButton,
+            { borderColor: colors.primary },
+          ])}
         />
         <Button
           title='Delete'
@@ -196,8 +251,19 @@ export const FormConfigurationScreen: React.FC = () => {
 
     return (
       <ScrollView style={styles.formDetails}>
-        <Text style={styles.detailTitle}>{selectedForm.title}</Text>
-        <Text style={styles.detailDescription}>{selectedForm.description}</Text>
+        <View style={styles.detailHeader}>
+          <View style={styles.detailTitleSection}>
+            <Text style={styles.detailTitle}>{selectedForm.title}</Text>
+            <Text style={styles.detailDescription}>{selectedForm.description}</Text>
+          </View>
+          <Button
+            title='Export JSON'
+            onPress={() => handleExportForm(selectedForm)}
+            variant='outline'
+            size='small'
+            style={styles.exportButton}
+          />
+        </View>
 
         <View style={styles.detailSection}>
           <Text style={styles.sectionTitle}>Form Information</Text>
@@ -265,12 +331,21 @@ export const FormConfigurationScreen: React.FC = () => {
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Form Configurations</Text>
-        <Button
-          title={showSearch ? 'Hide Search' : 'Search'}
-          onPress={() => setShowSearch(!showSearch)}
-          variant='outline'
-          size='small'
-        />
+        <View style={styles.headerButtons}>
+          <Button
+            title='Export All'
+            onPress={handleExportAllForms}
+            variant='outline'
+            size='small'
+            style={styles.headerButton}
+          />
+          <Button
+            title={showSearch ? 'Hide Search' : 'Search'}
+            onPress={() => setShowSearch(!showSearch)}
+            variant='outline'
+            size='small'
+          />
+        </View>
       </View>
 
       {/* Search Section */}
@@ -357,7 +432,7 @@ export const FormConfigurationScreen: React.FC = () => {
 const getStyles = (
   isTablet: boolean,
   getFontSize: (size: 'small' | 'medium' | 'large' | 'xlarge') => number,
-  getSpacing: (size: 'xs' | 'sm' | 'md' | 'lg' | 'xl') => number
+  getSpacing: (size: 'xs' | 'sm' | 'md' | 'lg' | 'xl') => number,
 ) => {
   return StyleSheet.create({
     container: {
@@ -369,12 +444,23 @@ const getStyles = (
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginBottom: getSpacing('lg'),
+      paddingHorizontal: getSpacing('md'),
+      paddingVertical: getSpacing('sm'),
+      backgroundColor: colors.surface,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
     },
     headerTitle: {
-      fontSize: getFontSize(isTablet ? 'xlarge' : 'large'),
+      fontSize: getFontSize('xlarge'),
       fontWeight: fontWeight.bold,
       color: colors.textPrimary,
+    },
+    headerButtons: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    headerButton: {
+      marginRight: getSpacing('sm'),
     },
     searchSection: {
       backgroundColor: colors.surface,
@@ -476,16 +562,29 @@ const getStyles = (
       borderRadius: 8,
       padding: getSpacing('md'),
     },
+    detailHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: getSpacing('md'),
+    },
+    detailTitleSection: {
+      flex: 1,
+    },
     detailTitle: {
       fontSize: getFontSize('large'),
       fontWeight: fontWeight.bold,
       color: colors.textPrimary,
-      marginBottom: getSpacing('sm'),
+      marginBottom: getSpacing('xs'),
     },
     detailDescription: {
       fontSize: getFontSize('medium'),
       color: colors.textSecondary,
       marginBottom: getSpacing('lg'),
+    },
+    exportButton: {
+      borderColor: colors.primary,
+      backgroundColor: colors.primaryLight,
     },
     detailSection: {
       marginBottom: getSpacing('lg'),

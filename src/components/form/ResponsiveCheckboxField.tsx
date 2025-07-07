@@ -21,20 +21,22 @@ export const ResponsiveCheckboxField: React.FC<
 
   // Handle both single checkbox (boolean) and multiple checkboxes (array)
   const isSingleCheckbox = !field.options || field.options.length === 0;
-  const value: string[] | boolean = isSingleCheckbox
-    ? formState[field.name] || false
-    : formState[field.name] || [];
+  const rawValue = formState[field.name];
+  const value = isSingleCheckbox
+    ? (typeof rawValue === 'boolean' ? rawValue : false)
+    : (Array.isArray(rawValue) ? rawValue : []);
 
   const riskLevel = getFieldRiskLevel(field);
   const styles = getStyles(isTablet, getFontSize, getSpacing, isLandscape);
   const columns = getColumns();
 
   const toggleOption = (optionValue: string) => {
-    const currentValue = formState[field.name] || [];
-    const newValue = currentValue.includes(optionValue)
-      ? currentValue.filter((v: string) => v !== optionValue)
-      : [...currentValue, optionValue];
-    setField(field.name, newValue);
+    const currentValue = formState[field.name];
+    const currentArray: string[] = Array.isArray(currentValue) ? currentValue.map(String) : [];
+    const newValue = currentArray.includes(optionValue)
+      ? currentArray.filter((v: string) => v !== optionValue)
+      : [...currentArray, optionValue];
+    setField(field.name, newValue as unknown as string | number | boolean | File | null);
   };
 
   const toggleSingleCheckbox = () => {
@@ -46,8 +48,9 @@ export const ResponsiveCheckboxField: React.FC<
   }: {
     item: { value: string; label: string };
   }) => {
-    const currentValue = formState[field.name] || [];
-    const isSelected = currentValue.includes(item.value);
+    const currentValue = formState[field.name];
+    const currentArray: string[] = Array.isArray(currentValue) ? currentValue.map(String) : [];
+    const isSelected = currentArray.includes(item.value);
     return (
       <View style={[styles.checkboxOption, { flex: 1 / columns }]}>
         <Button
@@ -124,9 +127,10 @@ export const ResponsiveCheckboxField: React.FC<
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.listContainer}
             >
-              {field.options?.map((option, index) => {
-                const currentValue = formState[field.name] || [];
-                const isSelected = currentValue.includes(option.value);
+              {field.options?.map((option, _index) => {
+                const currentValue = formState[field.name];
+                const currentArray: string[] = Array.isArray(currentValue) ? currentValue.map(String) : [];
+                const isSelected = currentArray.includes(option.value);
                 return (
                   <View key={option.value} style={styles.checkboxOption}>
                     <Button

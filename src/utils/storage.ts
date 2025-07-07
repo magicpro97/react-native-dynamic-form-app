@@ -22,8 +22,7 @@ export const getOfflineForms = (): OfflineFormData[] => {
     const formsJson = storage.getString(OFFLINE_FORMS_KEY);
     if (!formsJson) return [];
     return JSON.parse(formsJson);
-  } catch (error) {
-    console.error('Error getting offline forms:', error);
+  } catch {
     return [];
   }
 };
@@ -33,28 +32,23 @@ export const saveOfflineForm = (
   formData: FormState,
   formTitle: string,
 ): string => {
-  try {
-    const formId = generateFormId();
-    const now = Date.now();
-    const newForm: OfflineFormData = {
-      id: formId,
-      formData,
-      timestamp: now,
-      updatedAt: now,
-      status: 'pending',
-      formTitle,
-      syncAttempts: 0,
-    };
+  const formId = generateFormId();
+  const now = Date.now();
+  const newForm: OfflineFormData = {
+    id: formId,
+    formData,
+    timestamp: now,
+    updatedAt: now,
+    status: 'pending',
+    formTitle,
+    syncAttempts: 0,
+  };
 
-    const existingForms = getOfflineForms();
-    const updatedForms = [...existingForms, newForm];
+  const existingForms = getOfflineForms();
+  const updatedForms = [...existingForms, newForm];
 
-    storage.set(OFFLINE_FORMS_KEY, JSON.stringify(updatedForms));
-    return formId;
-  } catch (error) {
-    console.error('Error saving offline form:', error);
-    throw error;
-  }
+  storage.set(OFFLINE_FORMS_KEY, JSON.stringify(updatedForms));
+  return formId;
 };
 
 // Update form status
@@ -68,8 +62,8 @@ export const updateFormStatus = (
       form.id === formId ? { ...form, status } : form,
     );
     storage.set(OFFLINE_FORMS_KEY, JSON.stringify(updatedForms));
-  } catch (error) {
-    console.error('Error updating form status:', error);
+  } catch {
+    // Failed to update form status - storage error
   }
 };
 
@@ -79,8 +73,8 @@ export const deleteOfflineForm = (formId: string): void => {
     const forms = getOfflineForms();
     const updatedForms = forms.filter(form => form.id !== formId);
     storage.set(OFFLINE_FORMS_KEY, JSON.stringify(updatedForms));
-  } catch (error) {
-    console.error('Error deleting offline form:', error);
+  } catch {
+    // Failed to delete form - storage error
   }
 };
 
@@ -89,8 +83,7 @@ export const getPendingFormsCount = (): number => {
   try {
     const forms = getOfflineForms();
     return forms.filter(form => form.status === 'pending').length;
-  } catch (error) {
-    console.error('Error getting pending forms count:', error);
+  } catch {
     return 0;
   }
 };
@@ -100,8 +93,8 @@ export const clearAllOfflineForms = (): void => {
   try {
     storage.delete(OFFLINE_FORMS_KEY);
     storage.delete(FORM_COUNTER_KEY);
-  } catch (error) {
-    console.error('Error clearing offline forms:', error);
+  } catch {
+    // Failed to clear forms - storage error
   }
 };
 
@@ -113,8 +106,8 @@ export const updateFormData = (formId: string, formData: FormState): void => {
       form.id === formId ? { ...form, formData, updatedAt: Date.now() } : form,
     );
     storage.set(OFFLINE_FORMS_KEY, JSON.stringify(updatedForms));
-  } catch (error) {
-    console.error('Error updating form data:', error);
+  } catch {
+    // Failed to update form data - storage error
   }
 };
 
@@ -128,8 +121,8 @@ export const incrementSyncAttempts = (formId: string): void => {
         : form,
     );
     storage.set(OFFLINE_FORMS_KEY, JSON.stringify(updatedForms));
-  } catch (error) {
-    console.error('Error incrementing sync attempts:', error);
+  } catch {
+    // Failed to increment sync attempts - storage error
   }
 };
 
@@ -138,8 +131,7 @@ export const getPendingForms = (): OfflineFormData[] => {
   try {
     const forms = getOfflineForms();
     return forms.filter(form => form.status === 'pending');
-  } catch (error) {
-    console.error('Error getting pending forms:', error);
+  } catch {
     return [];
   }
 };

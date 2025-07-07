@@ -33,7 +33,7 @@ export const ValidationTestComponent = () => {
     results.push('\n=== MaxLength Tests ===');
     results.push(`Length 5, max 10: ${validators.maxLength('hello', 10)}`);
     results.push(
-      `Length 15, max 10: ${validators.maxLength('this is too long', 10)}`
+      `Length 15, max 10: ${validators.maxLength('this is too long', 10)}`,
     );
 
     // Test pattern

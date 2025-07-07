@@ -8,7 +8,6 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { getPendingFormsCount } from '../utils/storage';
 import { SyncStatus } from '../components/sync/SyncStatus';
 import { useSyncContext } from '../context/SyncContext';
 // Import form.json directly
@@ -30,7 +29,7 @@ export default function HomeScreen() {
 
         // Refresh pending forms count
         refreshPendingCount();
-      } catch (e) {
+      } catch {
         setFormTitle('Error loading form');
         setFieldCount(0);
       } finally {
@@ -54,10 +53,6 @@ export default function HomeScreen() {
 
   const navigateToOfflineQueue = () => {
     router.push('/offline-queue');
-  };
-
-  const navigateToFormConfiguration = () => {
-    router.push('/form-configuration');
   };
 
   if (loading) {
@@ -111,7 +106,7 @@ export default function HomeScreen() {
 
         <TouchableOpacity
           style={styles.configButton}
-          onPress={() => router.push('/form-configuration' as any)}
+          onPress={() => router.push('/form-configuration' as never)}
         >
           <Text style={styles.configButtonText}>⚙️ Form Configuration API</Text>
         </TouchableOpacity>
@@ -120,7 +115,7 @@ export default function HomeScreen() {
 
         <TouchableOpacity
           style={styles.testButton}
-          onPress={() => router.push('/validation-test' as any)}
+          onPress={() => router.push('/validation-test' as never)}
         >
           <Text style={styles.testButtonText}>🧪 Test Validation Rules</Text>
         </TouchableOpacity>

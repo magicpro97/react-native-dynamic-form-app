@@ -67,10 +67,10 @@ export const FormEditor: React.FC<FormEditorProps> = ({
   const { isTablet, getFontSize, getSpacing } = useResponsive();
   const [formData, setFormData] = useState<Partial<FormConfiguration>>({});
   const [editingFieldIndex, setEditingFieldIndex] = useState<number | null>(
-    null
+    null,
   );
   const [showValidationPanel, setShowValidationPanel] = useState<number | null>(
-    null
+    null,
   );
   const [testResults, setTestResults] = useState<{
     [key: string]: { isValid: boolean; message: string };
@@ -105,7 +105,7 @@ export const FormEditor: React.FC<FormEditorProps> = ({
 
     try {
       await onSave(formData);
-    } catch (_error) {
+    } catch {
       Alert.alert('Error', 'Failed to save form');
     }
   };
@@ -116,7 +116,7 @@ export const FormEditor: React.FC<FormEditorProps> = ({
     onChangeText: (text: string) => void,
     placeholder?: string,
     multiline = false,
-    required = false
+    required = false,
   ) => (
     <View style={styles.inputContainer}>
       <Text style={styles.inputLabel}>
@@ -137,7 +137,7 @@ export const FormEditor: React.FC<FormEditorProps> = ({
 
   const handleFieldChange = (
     index: number,
-    field: Partial<EnhancedFormField>
+    field: Partial<EnhancedFormField>,
   ) => {
     const updatedFields = [...(formData.fields || [])];
     updatedFields[index] = { ...updatedFields[index], ...field };
@@ -148,7 +148,7 @@ export const FormEditor: React.FC<FormEditorProps> = ({
     fieldIndex: number,
     validationType: string,
     enabled: boolean,
-    value?: any
+    value?: string | number,
   ) => {
     const updatedFields = [...(formData.fields || [])] as EnhancedFormField[];
     const field = updatedFields[fieldIndex];
@@ -158,12 +158,12 @@ export const FormEditor: React.FC<FormEditorProps> = ({
     }
 
     const existingIndex = field.validation.findIndex(
-      rule => rule.type === validationType
+      rule => rule.type === validationType,
     );
 
     if (enabled) {
       const newRule: ValidationRule = {
-        type: validationType as any,
+        type: validationType as ValidationRule['type'],
         message: getDefaultValidationMessage(validationType, value),
         value,
       };
@@ -182,7 +182,7 @@ export const FormEditor: React.FC<FormEditorProps> = ({
     setFormData({ ...formData, fields: updatedFields });
   };
 
-  const getDefaultValidationMessage = (type: string, value?: any): string => {
+  const getDefaultValidationMessage = (type: string, value?: string | number): string => {
     const messages: { [key: string]: string } = {
       required: 'This field is required',
       email: 'Please enter a valid email address',
@@ -201,7 +201,7 @@ export const FormEditor: React.FC<FormEditorProps> = ({
 
   const isValidationEnabled = (
     fieldIndex: number,
-    validationType: string
+    validationType: string,
   ): boolean => {
     const field = formData.fields?.[fieldIndex] as EnhancedFormField;
     return (
@@ -212,7 +212,7 @@ export const FormEditor: React.FC<FormEditorProps> = ({
   const testValidationRule = (
     type: string,
     value: string,
-    ruleValue?: any
+    ruleValue?: unknown,
   ): { isValid: boolean; message: string } => {
     try {
       let isValid = false;
@@ -238,20 +238,20 @@ export const FormEditor: React.FC<FormEditorProps> = ({
             : '❌ Invalid: Not a valid phone number';
           break;
         case 'minLength':
-          isValid = validators.minLength(value, ruleValue || 1);
+          isValid = validators.minLength(value, typeof ruleValue === 'number' ? ruleValue : 1);
           message = isValid
-            ? `✅ Valid: Length ${value.length} >= ${ruleValue || 1}`
-            : `❌ Invalid: Length ${value.length} < ${ruleValue || 1}`;
+            ? `✅ Valid: Length ${value.length} >= ${typeof ruleValue === 'number' ? ruleValue : 1}`
+            : `❌ Invalid: Length ${value.length} < ${typeof ruleValue === 'number' ? ruleValue : 1}`;
           break;
         case 'maxLength':
-          isValid = validators.maxLength(value, ruleValue || 100);
+          isValid = validators.maxLength(value, typeof ruleValue === 'number' ? ruleValue : 100);
           message = isValid
-            ? `✅ Valid: Length ${value.length} <= ${ruleValue || 100}`
-            : `❌ Invalid: Length ${value.length} > ${ruleValue || 100}`;
+            ? `✅ Valid: Length ${value.length} <= ${typeof ruleValue === 'number' ? ruleValue : 100}`
+            : `❌ Invalid: Length ${value.length} > ${typeof ruleValue === 'number' ? ruleValue : 100}`;
           break;
         case 'pattern':
           try {
-            isValid = validators.pattern(value, new RegExp(ruleValue || '.*'));
+            isValid = validators.pattern(value, new RegExp(typeof ruleValue === 'string' ? ruleValue : '.*'));
             message = isValid
               ? '✅ Valid: Pattern matches'
               : '❌ Invalid: Pattern does not match';
@@ -295,7 +295,7 @@ export const FormEditor: React.FC<FormEditorProps> = ({
       }
 
       return { isValid, message };
-    } catch (error) {
+    } catch {
       return { isValid: false, message: '❌ Error: Validation failed' };
     }
   };
@@ -304,7 +304,7 @@ export const FormEditor: React.FC<FormEditorProps> = ({
     fieldIndex: number,
     validationType: string,
     testValue: string,
-    ruleValue?: any
+    ruleValue?: unknown,
   ) => {
     const testKey = `${fieldIndex}-${validationType}`;
     const result = testValidationRule(validationType, testValue, ruleValue);
@@ -314,7 +314,7 @@ export const FormEditor: React.FC<FormEditorProps> = ({
     }));
   };
 
-  const getTestExamples = (validationType: string, ruleValue?: any) => {
+  const getTestExamples = (validationType: string, _ruleValue?: unknown) => {
     const examples: { [key: string]: string[] } = {
       required: ['', 'hello', ' '],
       email: ['test@example.com', 'invalid-email', 'user@domain'],
@@ -334,12 +334,12 @@ export const FormEditor: React.FC<FormEditorProps> = ({
   const runQuickTest = (
     fieldIndex: number,
     validationType: string,
-    ruleValue?: any
+    ruleValue?: unknown,
   ) => {
     const examples = getTestExamples(validationType, ruleValue);
     const results: string[] = [];
 
-    examples.forEach((example, idx) => {
+    examples.forEach((example) => {
       const result = testValidationRule(validationType, example, ruleValue);
       const status = result.isValid ? '✅' : '❌';
       results.push(`${status} "${example}": ${result.message}`);
@@ -357,8 +357,8 @@ export const FormEditor: React.FC<FormEditorProps> = ({
 
   const getValidationValue = (
     fieldIndex: number,
-    validationType: string
-  ): any => {
+    validationType: string,
+  ): unknown => {
     const field = formData.fields?.[fieldIndex] as EnhancedFormField;
     const rule = field?.validation?.find(rule => rule.type === validationType);
     return rule?.value;
@@ -455,7 +455,7 @@ export const FormEditor: React.FC<FormEditorProps> = ({
               (text: string) => handleFieldChange(index, { name: text }),
               'Enter field name',
               false,
-              true
+              true,
             )}
             {renderInputField(
               'Field Label',
@@ -463,7 +463,7 @@ export const FormEditor: React.FC<FormEditorProps> = ({
               (text: string) => handleFieldChange(index, { label: text }),
               'Enter field label',
               false,
-              true
+              true,
             )}
             <View style={styles.fieldRow}>
               <Text style={styles.fieldLabel}>Field Type</Text>
@@ -495,7 +495,7 @@ export const FormEditor: React.FC<FormEditorProps> = ({
               'Placeholder',
               field.placeholder || '',
               (text: string) => handleFieldChange(index, { placeholder: text }),
-              'Enter placeholder text'
+              'Enter placeholder text',
             )}
             <View style={styles.checkboxRow}>
               <TouchableOpacity
@@ -524,7 +524,7 @@ export const FormEditor: React.FC<FormEditorProps> = ({
                 style={styles.validationHeader}
                 onPress={() =>
                   setShowValidationPanel(
-                    showValidationPanel === index ? null : index
+                    showValidationPanel === index ? null : index,
                   )
                 }
               >
@@ -541,11 +541,11 @@ export const FormEditor: React.FC<FormEditorProps> = ({
                   {VALIDATION_TYPES.map(validation => {
                     const isEnabled = isValidationEnabled(
                       index,
-                      validation.type
+                      validation.type,
                     );
                     const currentValue = getValidationValue(
                       index,
-                      validation.type
+                      validation.type,
                     );
 
                     return (
@@ -557,7 +557,7 @@ export const FormEditor: React.FC<FormEditorProps> = ({
                               handleValidationChange(
                                 index,
                                 validation.type,
-                                enabled
+                                enabled,
                               )
                             }
                             thumbColor={
@@ -586,7 +586,7 @@ export const FormEditor: React.FC<FormEditorProps> = ({
                                   index,
                                   validation.type,
                                   true,
-                                  numValue
+                                  numValue,
                                 );
                               }}
                               keyboardType='numeric'
@@ -597,13 +597,13 @@ export const FormEditor: React.FC<FormEditorProps> = ({
                           <TextInput
                             style={styles.validationInput}
                             placeholder='Enter regex pattern'
-                            value={currentValue || ''}
+                            value={typeof currentValue === 'string' ? currentValue : ''}
                             onChangeText={text => {
                               handleValidationChange(
                                 index,
                                 validation.type,
                                 true,
-                                text
+                                text,
                               );
                             }}
                           />
@@ -623,7 +623,7 @@ export const FormEditor: React.FC<FormEditorProps> = ({
                                     runQuickTest(
                                       index,
                                       validation.type,
-                                      currentValue
+                                      currentValue,
                                     )
                                   }
                                 >
@@ -657,7 +657,7 @@ export const FormEditor: React.FC<FormEditorProps> = ({
                                     index,
                                     validation.type,
                                     testValue,
-                                    currentValue
+                                    currentValue,
                                   );
                                 } else {
                                   // Clear result when input is empty
@@ -674,7 +674,7 @@ export const FormEditor: React.FC<FormEditorProps> = ({
                             {(() => {
                               const testResult = getTestResult(
                                 index,
-                                validation.type
+                                validation.type,
                               );
                               if (testResult) {
                                 return (
@@ -745,7 +745,7 @@ export const FormEditor: React.FC<FormEditorProps> = ({
           (text: string) => setFormData({ ...formData, name: text }),
           'Enter form name',
           false,
-          true
+          true,
         )}
         {renderInputField(
           'Form Title',
@@ -753,14 +753,14 @@ export const FormEditor: React.FC<FormEditorProps> = ({
           (text: string) => setFormData({ ...formData, title: text }),
           'Enter form title',
           false,
-          true
+          true,
         )}
         {renderInputField(
           'Description',
           formData.description || '',
           (text: string) => setFormData({ ...formData, description: text }),
           'Enter form description',
-          true
+          true,
         )}
         {renderInputField(
           'Version',
@@ -768,7 +768,7 @@ export const FormEditor: React.FC<FormEditorProps> = ({
           (text: string) => setFormData({ ...formData, version: text }),
           'Enter version (e.g., 1.0.0)',
           false,
-          true
+          true,
         )}
       </View>
 
@@ -785,7 +785,7 @@ export const FormEditor: React.FC<FormEditorProps> = ({
           />
         </View>
         {formData.fields?.map((field, index) =>
-          renderFieldEditor(field, index)
+          renderFieldEditor(field, index),
         )}
       </View>
 
@@ -859,24 +859,24 @@ export const FormEditor: React.FC<FormEditorProps> = ({
           <Text style={styles.validationOverviewText}>
             Fields with Validation:{' '}
             {formData.fields?.filter(
-              f => (f as EnhancedFormField).validation?.length
+              f => (f as EnhancedFormField).validation?.length,
             ).length || 0}
           </Text>
         </View>
 
         {formData.fields?.some(
-          f => (f as EnhancedFormField).validation?.length
+          f => (f as EnhancedFormField).validation?.length,
         ) && (
           <View style={styles.validationPreview}>
             <Text style={styles.validationPreviewTitle}>
               Validation Rules Overview:
             </Text>
-            {formData.fields?.map((field, index) => {
+            {formData.fields?.map((field, fieldIndex) => {
               const enhancedField = field as EnhancedFormField;
               if (!enhancedField.validation?.length) return null;
 
               return (
-                <View key={index} style={styles.validationPreviewField}>
+                <View key={fieldIndex} style={styles.validationPreviewField}>
                   <Text style={styles.validationPreviewFieldName}>
                     {field.label}:
                   </Text>
@@ -898,7 +898,7 @@ export const FormEditor: React.FC<FormEditorProps> = ({
 const getStyles = (
   isTablet: boolean,
   getFontSize: (size: 'small' | 'medium' | 'large' | 'xlarge') => number,
-  getSpacing: (size: 'xs' | 'sm' | 'md' | 'lg' | 'xl') => number
+  getSpacing: (size: 'xs' | 'sm' | 'md' | 'lg' | 'xl') => number,
 ) => {
   return StyleSheet.create({
     container: {

@@ -5,8 +5,8 @@ interface FormContextType {
   formState: FormState;
   errors: FormErrors;
   dispatch: React.Dispatch<FormAction>;
-  setField: (name: string, value: any) => void;
-  setMultipleFields: (fields: { [key: string]: any }) => void;
+  setField: (name: string, value: string | number | boolean | File | null) => void;
+  setMultipleFields: (fields: { [key: string]: string | number | boolean | File | null }) => void;
   resetForm: () => void;
   setError: (name: string, error: string) => void;
   clearError: (name: string) => void;
@@ -21,15 +21,21 @@ const FormContext = createContext<FormContextType | undefined>(undefined);
 const formReducer = (state: FormState, action: FormAction): FormState => {
   switch (action.type) {
     case 'SET_FIELD':
-      return {
-        ...state,
-        [action.payload!.name!]: action.payload!.value,
-      };
+      if (action.payload?.name !== undefined) {
+        return {
+          ...state,
+          [action.payload.name]: action.payload.value ?? null,
+        };
+      }
+      return state;
     case 'SET_MULTIPLE_FIELDS':
-      return {
-        ...state,
-        ...action.payload!.fields,
-      };
+      if (action.payload?.fields) {
+        return {
+          ...state,
+          ...action.payload.fields,
+        };
+      }
+      return state;
     case 'RESET_FORM':
       return {};
     default:
@@ -37,20 +43,35 @@ const formReducer = (state: FormState, action: FormAction): FormState => {
   }
 };
 
+// Error action type
+interface ErrorAction {
+  type: 'SET_ERROR' | 'CLEAR_ERROR' | 'CLEAR_ALL_ERRORS';
+  payload?: {
+    name?: string;
+    error?: string;
+  };
+}
+
 // Error reducer
-const errorReducer = (state: FormErrors, action: any): FormErrors => {
+const errorReducer = (state: FormErrors, action: ErrorAction): FormErrors => {
   switch (action.type) {
     case 'SET_ERROR':
-      return {
-        ...state,
-        [action.payload.name]: action.payload.error,
-      };
+      if (action.payload?.name && action.payload?.error !== undefined) {
+        return {
+          ...state,
+          [action.payload.name]: action.payload.error,
+        };
+      }
+      return state;
     case 'CLEAR_ERROR': {
-      const newState = { ...state };
-      delete newState[action.payload.name];
-      return newState;
+      if (action.payload?.name) {
+        const newState = { ...state };
+        delete newState[action.payload.name];
+        return newState;
+      }
+      return state;
     }
-    case 'RESET_ERRORS':
+    case 'CLEAR_ALL_ERRORS':
       return {};
     default:
       return state;
@@ -64,7 +85,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({
   const [formState, dispatch] = useReducer(formReducer, {});
   const [errors, errorDispatch] = useReducer(errorReducer, {});
 
-  const setField = (name: string, value: any) => {
+  const setField = (name: string, value: string | number | boolean | File | null) => {
     dispatch({
       type: 'SET_FIELD',
       payload: { name, value },
@@ -75,7 +96,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({
     }
   };
 
-  const setMultipleFields = (fields: { [key: string]: any }) => {
+  const setMultipleFields = (fields: { [key: string]: string | number | boolean | File | null }) => {
     dispatch({
       type: 'SET_MULTIPLE_FIELDS',
       payload: { fields },
@@ -84,7 +105,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({
 
   const resetForm = () => {
     dispatch({ type: 'RESET_FORM' });
-    errorDispatch({ type: 'RESET_ERRORS' });
+    errorDispatch({ type: 'CLEAR_ALL_ERRORS' });
   };
 
   const setError = (name: string, error: string) => {
@@ -102,7 +123,7 @@ export const FormProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   const clearAllErrors = () => {
-    errorDispatch({ type: 'RESET_ERRORS' });
+    errorDispatch({ type: 'CLEAR_ALL_ERRORS' });
   };
 
   const hasErrors = () => {

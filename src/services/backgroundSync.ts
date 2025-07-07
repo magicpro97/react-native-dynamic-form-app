@@ -5,12 +5,11 @@ import {
   updateFormData,
   incrementSyncAttempts,
 } from '../utils/storage';
-import { OfflineFormData } from '../types/form';
 
 // Background sync service
 export class BackgroundSyncService {
   private static instance: BackgroundSyncService;
-  private syncInterval: any = null;
+  private syncInterval: ReturnType<typeof setInterval> | null = null;
   private isSyncing = false;
   private syncListeners: Array<(stats: SyncStats) => void> = [];
 
@@ -34,7 +33,6 @@ export class BackgroundSyncService {
       this.syncPendingForms();
     }, 30000);
 
-    console.log('Background sync started');
   }
 
   // Stop background sync
@@ -42,7 +40,6 @@ export class BackgroundSyncService {
     if (this.syncInterval) {
       clearInterval(this.syncInterval);
       this.syncInterval = null;
-      console.log('Background sync stopped');
     }
   }
 
@@ -69,7 +66,6 @@ export class BackgroundSyncService {
   // Main sync logic
   private async syncPendingForms(): Promise<SyncStats> {
     if (this.isSyncing) {
-      console.log('Sync already in progress');
       return {
         total: 0,
         successful: 0,
@@ -85,7 +81,6 @@ export class BackgroundSyncService {
       // Check network connectivity
       const isOnline = await isNetworkAvailable();
       if (!isOnline) {
-        console.log('No network connectivity, skipping sync');
         return {
           total: 0,
           successful: 0,
@@ -98,7 +93,6 @@ export class BackgroundSyncService {
       // Get all pending forms
       const pendingForms = getPendingForms();
       if (pendingForms.length === 0) {
-        console.log('No pending forms to sync');
         return {
           total: 0,
           successful: 0,
@@ -108,7 +102,6 @@ export class BackgroundSyncService {
         };
       }
 
-      console.log(`Starting sync for ${pendingForms.length} forms`);
 
       let successful = 0;
       let failed = 0;
@@ -152,8 +145,7 @@ export class BackgroundSyncService {
               updateFormStatus(form.id, 'failed');
             }
           }
-        } catch (error) {
-          console.error(`Error syncing form ${form.id}:`, error);
+        } catch {
           failed++;
           incrementSyncAttempts(form.id);
 
@@ -172,7 +164,6 @@ export class BackgroundSyncService {
         message: `Synced ${successful}/${pendingForms.length} forms`,
       };
 
-      console.log('Sync completed:', stats);
       this.notifyListeners(stats);
 
       return stats;

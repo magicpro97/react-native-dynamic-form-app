@@ -16,7 +16,8 @@ interface PasswordFieldProps {
 export const PasswordField: React.FC<PasswordFieldProps> = ({ field }) => {
   const { formState, setField, errors } = useForm();
   const [showPassword, setShowPassword] = useState(false);
-  const value = formState[field.name] || '';
+  const rawValue = formState[field.name] || '';
+  const value = typeof rawValue === 'string' ? rawValue : String(rawValue || '');
   const error = errors[field.name];
 
   const handleTextChange = (text: string) => {

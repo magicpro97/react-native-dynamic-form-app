@@ -7,7 +7,7 @@ export const useValidation = (fieldConfigs: FieldConfig[]) => {
 
   // Validate a single field
   const validateSingleField = useCallback(
-    (fieldName: string, value: any) => {
+    (fieldName: string, value: string | number | boolean | File | null) => {
       const fieldConfig = fieldConfigs.find(
         config => config.name === fieldName,
       );

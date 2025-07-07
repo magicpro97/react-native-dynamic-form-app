@@ -11,7 +11,8 @@ interface PhotoFieldProps {
 export const PhotoField: React.FC<PhotoFieldProps> = ({ field }) => {
   const { formState, setField, errors } = useForm();
   const [loading, setLoading] = useState(false);
-  const value = formState[field.name] || '';
+  const rawValue = formState[field.name] || '';
+  const value = typeof rawValue === 'string' ? rawValue : '';
   const error = errors[field.name];
 
   const requestPermission = async () => {
@@ -45,7 +46,7 @@ export const PhotoField: React.FC<PhotoFieldProps> = ({ field }) => {
         const base64Image = `data:${asset.type || 'image/jpeg'};base64,${asset.base64}`;
         setField(field.name, base64Image);
       }
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'Failed to pick image');
     } finally {
       setLoading(false);
@@ -76,7 +77,7 @@ export const PhotoField: React.FC<PhotoFieldProps> = ({ field }) => {
         const base64Image = `data:${asset.type || 'image/jpeg'};base64,${asset.base64}`;
         setField(field.name, base64Image);
       }
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'Failed to take photo');
     } finally {
       setLoading(false);

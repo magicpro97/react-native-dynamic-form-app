@@ -27,7 +27,7 @@ export const validateForm = (
     }
 
     // Email validation
-    if (field.type === 'email' && value) {
+    if (field.type === 'email' && value && typeof value === 'string') {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(value)) {
         errors[field.name] = 'Please enter a valid email address';
@@ -66,12 +66,12 @@ export const validateForm = (
   };
 };
 
-export const getFieldValue = (field: FormField, formState: FormState): any => {
+export const getFieldValue = (field: FormField, formState: FormState): string | number | boolean | File | null => {
   const value = formState[field.name];
 
   switch (field.type) {
     case 'checkbox':
-      return value || [];
+      return value || null;
     case 'radio':
     case 'select':
       return value || '';
@@ -86,8 +86,8 @@ export const getFieldValue = (field: FormField, formState: FormState): any => {
 export const formatFormData = (
   formConfig: FormField[],
   formState: FormState,
-): any => {
-  const formattedData: any = {};
+): Record<string, unknown> => {
+  const formattedData: Record<string, unknown> = {};
 
   formConfig.forEach(field => {
     const value = getFieldValue(field, formState);

@@ -89,7 +89,7 @@ const OfflineQueueScreen: React.FC = () => {
       }
 
       loadOfflineForms();
-    } catch (error) {
+    } catch {
       updateFormStatus(form.id, 'failed');
       Alert.alert('Error', 'Failed to sync form. Please try again.');
       loadOfflineForms();
@@ -135,7 +135,7 @@ const OfflineQueueScreen: React.FC = () => {
                     updateFormStatus(form.id, 'failed');
                     failedCount++;
                   }
-                } catch (error) {
+                } catch {
                   updateFormStatus(form.id, 'failed');
                   failedCount++;
                 }
@@ -147,7 +147,7 @@ const OfflineQueueScreen: React.FC = () => {
               );
 
               loadOfflineForms();
-            } catch (error) {
+            } catch {
               Alert.alert('Error', 'Failed to sync forms. Please try again.');
             }
           },

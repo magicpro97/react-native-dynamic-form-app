@@ -52,7 +52,7 @@ const simulateDelay = (ms: number): Promise<void> => {
 
 // Mock submit form API
 export const submitFormAPI = async (
-  formData: FormState
+  formData: FormState,
 ): Promise<SubmitFormResponse> => {
   try {
     // Simulate network delay (1-2 seconds)
@@ -83,8 +83,7 @@ export const submitFormAPI = async (
       message: 'Form submitted successfully!',
       data,
     };
-  } catch (error) {
-    console.error('Error submitting form:', error);
+  } catch {
     return {
       success: false,
       message: 'Failed to submit form. Please try again.',
@@ -94,7 +93,7 @@ export const submitFormAPI = async (
 
 // Mock sync offline forms API
 export const syncOfflineFormsAPI = async (
-  forms: FormState[]
+  forms: FormState[],
 ): Promise<SubmitFormResponse[]> => {
   try {
     // Simulate network delay
@@ -102,7 +101,7 @@ export const syncOfflineFormsAPI = async (
 
     // Mock sync all forms
     const results = await Promise.all(
-      forms.map(async formData => {
+      forms.map(async (_formData) => {
         // Random success/failure for demo
         const success = Math.random() > 0.1; // 90% success rate
 
@@ -118,12 +117,11 @@ export const syncOfflineFormsAPI = async (
             message: 'Sync failed. Will retry later.',
           };
         }
-      })
+      }),
     );
 
     return results;
-  } catch (error) {
-    console.error('Error syncing offline forms:', error);
+  } catch {
     return forms.map(() => ({
       success: false,
       message: 'Network error. Please try again.',
@@ -136,15 +134,15 @@ export const isNetworkAvailable = async (): Promise<boolean> => {
   try {
     const netInfo = await NetInfo.fetch();
     return netInfo.isConnected === true && netInfo.isInternetReachable === true;
-  } catch (error) {
-    console.error('Error checking network:', error);
+  } catch {
+    
     return false;
   }
 };
 
 // Mock sync individual form API
 export const syncFormAPI = async (
-  form: OfflineFormData
+  form: OfflineFormData,
 ): Promise<{
   success: boolean;
   message: string;
@@ -199,8 +197,8 @@ export const syncFormAPI = async (
           action: 'upload',
         };
     }
-  } catch (error) {
-    console.error('Error syncing form:', error);
+  } catch {
+    
     return {
       success: false,
       message: 'Network error during sync',
@@ -212,7 +210,7 @@ export const syncFormAPI = async (
 // Mock API to fetch form configurations
 export const fetchFormConfigurations = async (
   page = 1,
-  limit = 10
+  limit = 10,
 ): Promise<FormListResponse> => {
   try {
     // Simulate network delay
@@ -317,8 +315,8 @@ export const fetchFormConfigurations = async (
     };
 
     return response;
-  } catch (error) {
-    console.error('Error fetching form configurations:', error);
+  } catch {
+    
     return {
       success: false,
       message: 'Failed to fetch form configurations',
@@ -334,7 +332,7 @@ export const fetchFormConfigurations = async (
 
 // Mock API to fetch a single form configuration by ID
 export const fetchFormConfigurationById = async (
-  id: string
+  id: string,
 ): Promise<FormDetailResponse> => {
   try {
     // Simulate network delay
@@ -452,8 +450,8 @@ export const fetchFormConfigurationById = async (
         },
       };
     }
-  } catch (error) {
-    console.error('Error fetching form configuration:', error);
+  } catch {
+    
     return {
       success: false,
       message: 'Failed to fetch form configuration',
@@ -472,7 +470,7 @@ export const fetchFormConfigurationById = async (
 
 // API to create a new form configuration
 export const createFormConfiguration = async (
-  formData: Omit<FormConfiguration, 'id' | 'createdAt' | 'updatedAt'>
+  formData: Omit<FormConfiguration, 'id' | 'createdAt' | 'updatedAt'>,
 ): Promise<FormDetailResponse> => {
   try {
     // Simulate network delay
@@ -504,8 +502,8 @@ export const createFormConfiguration = async (
         updatedAt: new Date().toISOString(),
       },
     };
-  } catch (error) {
-    console.error('Error creating form configuration:', error);
+  } catch {
+    
     return {
       success: false,
       message: 'Failed to create form configuration',
@@ -525,7 +523,7 @@ export const createFormConfiguration = async (
 // API to update an existing form configuration
 export const updateFormConfiguration = async (
   id: string,
-  formData: Partial<FormConfiguration>
+  formData: Partial<FormConfiguration>,
 ): Promise<FormDetailResponse> => {
   try {
     // Simulate network delay
@@ -555,8 +553,8 @@ export const updateFormConfiguration = async (
         updatedAt: new Date().toISOString(),
       },
     };
-  } catch (error) {
-    console.error('Error updating form configuration:', error);
+  } catch {
+    
     return {
       success: false,
       message: 'Failed to update form configuration',
@@ -575,7 +573,7 @@ export const updateFormConfiguration = async (
 
 // API to delete a form configuration
 export const deleteFormConfiguration = async (
-  id: string
+  id: string,
 ): Promise<{ success: boolean; message: string }> => {
   try {
     // Simulate network delay
@@ -597,8 +595,8 @@ export const deleteFormConfiguration = async (
       success: true,
       message: 'Form configuration deleted successfully',
     };
-  } catch (error) {
-    console.error('Error deleting form configuration:', error);
+  } catch {
+    
     return {
       success: false,
       message: 'Failed to delete form configuration',
@@ -610,7 +608,7 @@ export const deleteFormConfiguration = async (
 export const searchFormConfigurations = async (
   query: string,
   page = 1,
-  limit = 10
+  limit = 10,
 ): Promise<FormListResponse> => {
   try {
     // Simulate network delay
@@ -624,7 +622,7 @@ export const searchFormConfigurations = async (
         headers: {
           Authorization: 'Bearer YOUR_AUTH_TOKEN', // Replace with actual token
         },
-      }
+      },
     );
 
     if (!response.ok) {
@@ -638,8 +636,8 @@ export const searchFormConfigurations = async (
       message: 'Form configurations searched successfully',
       data,
     };
-  } catch (error) {
-    console.error('Error searching form configurations:', error);
+  } catch {
+    
     return {
       success: false,
       message: 'Failed to search form configurations',
@@ -655,7 +653,7 @@ export const searchFormConfigurations = async (
 
 // API to get form configuration by name/slug
 export const fetchFormConfigurationByName = async (
-  name: string
+  name: string,
 ): Promise<FormDetailResponse> => {
   try {
     // Simulate network delay
@@ -680,8 +678,8 @@ export const fetchFormConfigurationByName = async (
       message: 'Form configuration fetched successfully',
       data,
     };
-  } catch (error) {
-    console.error('Error fetching form configuration by name:', error);
+  } catch {
+    
     return {
       success: false,
       message: 'Failed to fetch form configuration',
@@ -700,7 +698,7 @@ export const fetchFormConfigurationByName = async (
 
 // Helper function to validate form configuration
 export const validateFormConfiguration = (
-  config: FormConfiguration
+  config: FormConfiguration,
 ): { isValid: boolean; errors: string[] } => {
   const errors: string[] = [];
 
@@ -716,17 +714,17 @@ export const validateFormConfiguration = (
     errors.push('At least one field is required');
   }
 
-  config.fields.forEach((field, index) => {
+  config.fields.forEach((field, fieldIndex) => {
     if (!field.name || field.name.trim() === '') {
-      errors.push(`Field ${index + 1}: Name is required`);
+      errors.push(`Field ${fieldIndex + 1}: Name is required`);
     }
 
     if (!field.label || field.label.trim() === '') {
-      errors.push(`Field ${index + 1}: Label is required`);
+      errors.push(`Field ${fieldIndex + 1}: Label is required`);
     }
 
     if (!field.type) {
-      errors.push(`Field ${index + 1}: Type is required`);
+      errors.push(`Field ${fieldIndex + 1}: Type is required`);
     }
 
     if (
@@ -734,7 +732,7 @@ export const validateFormConfiguration = (
       (!field.options || field.options.length === 0)
     ) {
       errors.push(
-        `Field ${index + 1}: Options are required for ${field.type} fields`
+        `Field ${fieldIndex + 1}: Options are required for ${field.type} fields`,
       );
     }
   });
