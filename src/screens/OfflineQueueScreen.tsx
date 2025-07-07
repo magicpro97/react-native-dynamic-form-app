@@ -57,11 +57,10 @@ const OfflineQueueScreen: React.FC = () => {
   };
 
   const handleViewForm = (form: OfflineFormData) => {
-    Alert.alert(
-      'Form Details',
-      `Title: ${form.formTitle}\nSubmitted: ${new Date(form.timestamp).toLocaleString()}\nStatus: ${form.status}\n\nData: ${JSON.stringify(form.formData, null, 2)}`,
-      [{ text: 'OK' }],
-    );
+    router.push({
+      pathname: '/view-form' as any,
+      params: { formId: form.id },
+    });
   };
 
   const handleSyncForm = async (form: OfflineFormData) => {
