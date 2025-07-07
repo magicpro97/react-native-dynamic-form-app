@@ -9,19 +9,20 @@ import {
   Query,
   HttpCode,
   HttpStatus,
-  NotFoundException,
+  UseGuards,
 } from '@nestjs/common';
 import { FormService } from './form.service';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { CreateFormDto } from './dto/create-form.dto';
+import { UpdateFormDto } from './dto/update-form.dto';
 
 @Controller('forms')
+@UseGuards(JwtAuthGuard)
 export class FormController {
   constructor(private readonly formService: FormService) {}
 
   @Get()
-  async getForms(
-    @Query('page') page = 1,
-    @Query('limit') limit = 10,
-  ) {
+  async getForms(@Query('page') page = 1, @Query('limit') limit = 10) {
     return this.formService.findAll(Number(page), Number(limit));
   }
 
@@ -51,13 +52,16 @@ export class FormController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async createForm(@Body() data: any) {
-    return this.formService.create(data);
+  async createForm(@Body() createFormDto: CreateFormDto) {
+    return this.formService.create(createFormDto);
   }
 
   @Put(':id')
-  async updateForm(@Param('id') id: string, @Body() updates: any) {
-    return this.formService.update(id, updates);
+  async updateForm(
+    @Param('id') id: string,
+    @Body() updateFormDto: UpdateFormDto,
+  ) {
+    return this.formService.update(id, updateFormDto);
   }
 
   @Delete(':id')

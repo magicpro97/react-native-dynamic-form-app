@@ -14,13 +14,13 @@ export class FormConfiguration {
   @Column({ unique: true })
   name: string;
 
-  @Column()
+  @Column({ nullable: true })
   title: string;
 
   @Column({ nullable: true })
   description: string;
 
-  @Column()
+  @Column({ default: '1.0.0' })
   version: string;
 
   @Column({ type: 'jsonb' })
